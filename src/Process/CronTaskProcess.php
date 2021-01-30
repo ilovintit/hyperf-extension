@@ -1,18 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Process;
 
-use App\Utils\RedisLock;
 use Hyperf\Process\AbstractProcess;
+use Iit\HyLib\RedisLock\RedisLock;
+use Exception;
+use Iit\HyLib\Utils\Log;
 
-abstract class AbstractCronParallelTaskProcess extends AbstractProcess
+/**
+ * Class CronTaskProcess
+ * @package Iit\HyLib\Process
+ */
+abstract class CronTaskProcess extends AbstractProcess
 {
-
     /**
      * @var RedisLock
      */
-    public $lock;
+    public RedisLock $lock;
 
     /**
      * The logical of process will place in here.
@@ -36,16 +41,17 @@ abstract class AbstractCronParallelTaskProcess extends AbstractProcess
                 continue;
             }
             $this->logInfo('get-lock-successful:' . microtime(true));
-            if (!$parallelTask = $this->getParallelTask()) {
-                $this->logInfo('not-found-need-handle-task:' . microtime(true));
-                sleep($this->sleepTime());
-            }
-            $this->lock->release();
             try {
-                $this->handleParallelTask($parallelTask);
+                $taskResult = $this->cronTask();
+                if ($taskResult === 'delay') {
+                    sleep($this->sleepTime());
+                }
+                $this->lock->release();
             } catch (Exception $exception) {
-                logs()->error($exception->__toString());
-                $this->logInfo('run-parallel-task-exception:' . microtime(true));
+                Log::error($exception->__toString());
+                $this->logInfo('run-cron-task-exception:' . microtime(true));
+                sleep($this->sleepTime());
+                $this->lock->release();
             }
         } while (true);
     }
@@ -53,7 +59,7 @@ abstract class AbstractCronParallelTaskProcess extends AbstractProcess
     /**
      * @return int
      */
-    protected function sleepTime()
+    protected function sleepTime(): int
     {
         return intval(round(rand($this->runInterval() * 100 / 2, $this->runInterval() * 100) / 100, 0));
     }
@@ -64,32 +70,25 @@ abstract class AbstractCronParallelTaskProcess extends AbstractProcess
      */
     protected function logInfo($message, $content = [])
     {
-        logs()->info($this->taskKey() . ':' . $message, $content);
+        Log::info($this->taskKey() . ':' . $message, $content);
     }
 
     /**
      * @return string
      */
-    public function taskKey()
+    public function taskKey(): string
     {
         return str_replace('_', '-', snake_case((new \ReflectionClass(static::class))->getShortName()));
     }
 
     /**
-     * 没有任务时休眠间隔,单位秒
+     * 间隔运行时间,单位秒
      * @return integer
      */
-    abstract public function runInterval();
+    abstract public function runInterval(): int;
 
     /**
-     * @return null|AbstractParallelTask
+     * 执行任务
      */
-    abstract public function getParallelTask();
-
-    /**
-     * @param AbstractParallelTask $task
-     */
-    abstract public function handleParallelTask(AbstractParallelTask $task): void;
-
-
+    abstract public function cronTask();
 }

@@ -7,6 +7,10 @@ use Carbon\Carbon;
 use DateInterval;
 use DateTimeInterface;
 
+/**
+ * Trait InteractsWithTime
+ * @package Iit\HyLib\RedisLock
+ */
 trait InteractsWithTime
 {
     /**

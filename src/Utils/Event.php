@@ -4,7 +4,7 @@ namespace Iit\HyLib\Utils;
 
 use Hyperf\DbConnection\Db;
 use Hyperf\Utils\ApplicationContext;
-use Iit\HyLib\Contracts\AbstractEvent;
+use Iit\HyLib\Event\AbstractEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Throwable;
 

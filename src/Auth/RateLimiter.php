@@ -1,14 +1,6 @@
 <?php
 
 declare(strict_types=1);
-/**
- * This file is part of Hyperf.
- *
- * @link     https://www.hyperf.io
- * @document https://doc.hyperf.io
- * @contact  group@hyperf.io
- * @license  https://github.com/hyperf/hyperf/blob/master/LICENSE
- */
 
 namespace Iit\HyLib\Auth;
 
@@ -17,6 +9,10 @@ use Hyperf\Utils\InteractsWithTime;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
+/**
+ * Class RateLimiter
+ * @package Iit\HyLib\Auth
+ */
 class RateLimiter
 {
     use InteractsWithTime;
@@ -25,7 +21,7 @@ class RateLimiter
      * @Inject
      * @var CacheInterface
      */
-    protected $cache;
+    protected CacheInterface $cache;
 
     /**
      * @param $key
@@ -33,17 +29,14 @@ class RateLimiter
      * @return bool
      * @throws InvalidArgumentException
      */
-
-    public function tooManyAttempts($key, $maxAttempts)
+    public function tooManyAttempts($key, $maxAttempts): bool
     {
         if ($this->attempts($key) >= $maxAttempts) {
             if ($this->cache->has($key . ':timer')) {
                 return true;
             }
-
             $this->resetAttempts($key);
         }
-
         return false;
     }
 
@@ -53,23 +46,18 @@ class RateLimiter
      * @return int
      * @throws InvalidArgumentException
      */
-
-    public function hit($key, $decaySeconds = 60)
+    public function hit($key, $decaySeconds = 60): int
     {
         $this->cache->set(
             $key . ':timer',
             $this->availableAt($decaySeconds),
             $decaySeconds
         );
-
         $added = $this->cache->set($key, 0, $decaySeconds);
-
-        $hits = (int) $this->cache->get($key);
-
-        if (! $added && $hits == 1) {
+        $hits = (int)$this->cache->get($key);
+        if (!$added && $hits == 1) {
             $this->cache->set($key, 1, $decaySeconds);
         }
-
         return $hits;
     }
 
@@ -78,7 +66,6 @@ class RateLimiter
      * @return mixed
      * @throws InvalidArgumentException
      */
-
     public function attempts($key)
     {
         return $this->cache->get($key, 0);
@@ -89,8 +76,7 @@ class RateLimiter
      * @return bool
      * @throws InvalidArgumentException
      */
-
-    public function resetAttempts($key)
+    public function resetAttempts($key): bool
     {
         return $this->cache->delete($key);
     }
@@ -101,11 +87,9 @@ class RateLimiter
      * @return mixed
      * @throws InvalidArgumentException
      */
-
     public function retriesLeft($key, $maxAttempts)
     {
         $attempts = $this->attempts($key);
-
         return $maxAttempts - $attempts;
     }
 
@@ -113,11 +97,9 @@ class RateLimiter
      * @param $key
      * @throws InvalidArgumentException
      */
-
     public function clear($key)
     {
         $this->resetAttempts($key);
-
         $this->cache->delete($key . ':timer');
     }
 
@@ -126,8 +108,7 @@ class RateLimiter
      * @return int|mixed
      * @throws InvalidArgumentException
      */
-
-    public function availableIn($key)
+    public function availableIn($key): int
     {
         return $this->cache->get($key . ':timer') - $this->currentTime();
     }

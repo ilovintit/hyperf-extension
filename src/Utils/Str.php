@@ -15,6 +15,15 @@ class Str extends \Hyperf\Utils\Str
      */
     public static function camelCase($string)
     {
-        return is_numeric($string) ? $string : Str::camel($string);
+        return is_numeric($string) ? $string : parent::camel($string);
+    }
+
+    /**
+     * @param $string
+     * @return int|string
+     */
+    public static function snakeCase($string)
+    {
+        return is_numeric($string) ? $string : parent::snake($string);
     }
 }

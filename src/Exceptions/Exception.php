@@ -5,6 +5,10 @@ namespace Iit\HyLib\Exceptions;
 
 use Throwable;
 
+/**
+ * Class Exception
+ * @package Iit\HyLib\Exceptions
+ */
 abstract class Exception extends \RuntimeException implements Throwable
 {
     /**

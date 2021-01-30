@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Traits;
+namespace Iit\HyLib\Event;
 
 use Symfony\Component\HttpFoundation\HeaderBag;
 

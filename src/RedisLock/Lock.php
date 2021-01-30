@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\RedisLock;
 
+/**
+ * Interface Lock
+ * @package Iit\HyLib\RedisLock
+ */
 interface Lock
 {
     /**

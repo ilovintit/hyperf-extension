@@ -66,4 +66,23 @@ class Arr extends \Hyperf\Utils\Arr
         }
         return $return;
     }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    public static function snakeCaseArrayKeys(array $array): array
+    {
+        $return = [];
+        foreach ($array as $key => $item) {
+            if (is_array($item)) {
+                $return[Str::snakeCase($key)] = Arr::snakeCaseArrayKeys($item);
+            } else if ($item instanceof Collection) {
+                $return[Str::snakeCase($key)] = Arr::snakeCaseArrayKeys($item->toArray());
+            } else {
+                $return[Str::snakeCase($key)] = $item;
+            }
+        }
+        return $return;
+    }
 }

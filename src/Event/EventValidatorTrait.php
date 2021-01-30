@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Event;
 
-use App\Utils\Convert;
 use Hyperf\Contract\ValidatorInterface;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\ValidationException;
+use Iit\HyLib\Utils\Arr;
 
 trait EventValidatorTrait
 {
@@ -28,7 +28,7 @@ trait EventValidatorTrait
 
     public function validateInput(array $input)
     {
-        $this->input = Convert::arrayRealType($input);
+        $this->input = Arr::toRealType($input);
         $this->validator = ApplicationContext::getContainer()
             ->get(ValidatorFactoryInterface::class)
             ->make($this->input, $this->rules(), $this->messages());

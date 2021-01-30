@@ -38,7 +38,7 @@ class Optional implements ArrayAccess
      * @param string $key
      * @return mixed
      */
-    public function __get($key)
+    public function __get(string $key)
     {
         if (is_object($this->value)) {
             return $this->value->{$key} ?? null;
@@ -51,7 +51,7 @@ class Optional implements ArrayAccess
      * @param mixed $name
      * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         if (is_object($this->value)) {
             return isset($this->value->{$name});
@@ -67,49 +67,49 @@ class Optional implements ArrayAccess
     /**
      * Determine if an item exists at an offset.
      *
-     * @param mixed $key
+     * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists($offset): bool
     {
-        return Arr::accessible($this->value) && Arr::exists($this->value, $key);
+        return Arr::accessible($this->value) && Arr::exists($this->value, $offset);
     }
 
     /**
      * Get an item at a given offset.
      *
-     * @param mixed $key
+     * @param mixed $offset
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet($offset)
     {
-        return Arr::get($this->value, $key);
+        return Arr::get($this->value, $offset);
     }
 
     /**
      * Set the item at a given offset.
      *
-     * @param mixed $key
+     * @param mixed $offset
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($offset, $value)
     {
         if (Arr::accessible($this->value)) {
-            $this->value[$key] = $value;
+            $this->value[$offset] = $value;
         }
     }
 
     /**
      * Unset the item at a given offset.
      *
-     * @param string $key
+     * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset($offset)
     {
         if (Arr::accessible($this->value)) {
-            unset($this->value[$key]);
+            unset($this->value[$offset]);
         }
     }
 
@@ -120,10 +120,24 @@ class Optional implements ArrayAccess
      * @param array $parameters
      * @return mixed
      */
-    public function __call($method, $parameters)
+    public function __call(string $method, array $parameters)
     {
         if (is_object($this->value)) {
             return $this->value->{$method}(...$parameters);
+        }
+    }
+
+    /**
+     * @param null $value
+     * @param callable|null $callback
+     * @return Optional
+     */
+    public static function create($value = null, callable $callback = null): Optional
+    {
+        if (is_null($callback)) {
+            return new self($value);
+        } elseif (!is_null($value)) {
+            return new self($callback($value));
         }
     }
 }

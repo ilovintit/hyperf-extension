@@ -1,9 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
-
-use Iit\HyLib\Traits\HeaderToBag;
+namespace Iit\HyLib\Event;
 
 /**
  * Class DeleteEvent

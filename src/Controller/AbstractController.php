@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Controller;
 
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;

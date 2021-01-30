@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Event;
 
 use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\Database\Model\Builder;

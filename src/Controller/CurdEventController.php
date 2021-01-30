@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Controller;
 
+use Iit\HyLib\Event\AbstractEvent;
+use Iit\HyLib\Event\EventController;
 use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\HttpServer\Contract\RequestInterface;
 use Iit\HyLib\Utils\Event;

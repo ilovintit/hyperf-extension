@@ -8,6 +8,10 @@ use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Redis;
 
+/**
+ * Class RedisLock
+ * @package Iit\HyLib\RedisLock
+ */
 class RedisLock extends AbstractLock
 {
     /**
