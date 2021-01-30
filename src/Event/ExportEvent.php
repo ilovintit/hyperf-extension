@@ -3,8 +3,12 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Contracts;
 
-use App\Utils\Export;
+use Iit\HyLib\Utils\Export;
 
+/**
+ * Class ExportEvent
+ * @package Iit\HyLib\Contracts
+ */
 abstract class ExportEvent extends ListEvent
 {
     /**
@@ -15,7 +19,7 @@ abstract class ExportEvent extends ListEvent
     /**
      * @var Export
      */
-    public $export;
+    public Export $export;
 
     /**
      * ExportEvent constructor.
@@ -37,13 +41,13 @@ abstract class ExportEvent extends ListEvent
     /**
      * @return array
      */
-    abstract public function headers();
+    abstract public function headers(): array;
 
     /**
      * @return string
      */
 
-    public function successMessage()
+    public function successMessage(): string
     {
         return '导出成功';
     }
@@ -52,7 +56,7 @@ abstract class ExportEvent extends ListEvent
      * @return string
      */
 
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '导出失败';
     }

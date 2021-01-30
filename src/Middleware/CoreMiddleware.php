@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Middleware;
+namespace Iit\HyLib\Middleware;
 
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Contracts\Arrayable;

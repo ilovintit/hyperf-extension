@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Services;
+namespace Iit\HyLib\Manager;
 
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Context;
-use Psr\Http\Message\ServerRequestInterface;
+use Iit\HyLib\Utils\Log;
+use Iit\HyLib\Utils\Request;
 use Redis;
 
 class SessionManager
@@ -31,10 +31,10 @@ class SessionManager
     /**
      * @return string
      */
-    public function cacheKey()
+    public function cacheKey(): ?string
     {
-        $sessionId = method_exists(request(), 'getHeaderLine') ?
-            request()->getHeaderLine('X-Ca-Applets-Session-Id') : null;
+        $sessionId = method_exists(Request::now(), 'getHeaderLine') ?
+            Request::now()->getHeaderLine('X-Ca-Applets-Session-Id') : null;
         return empty($sessionId) ? null : $sessionId;
     }
 
@@ -53,7 +53,7 @@ class SessionManager
      */
     public function getSession()
     {
-        logs()->info('session-cache-key', ['key' => $this->cacheKey()]);
+        Log::info('session-cache-key', ['key' => $this->cacheKey()]);
         return !empty($this->cacheKey()) ? $this->redis->get($this->cacheKey()) : null;
     }
 }

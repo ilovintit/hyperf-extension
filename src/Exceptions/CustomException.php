@@ -3,22 +3,51 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Exceptions;
 
-use Iit\HyLib\Contracts\Exception;
-
+/**
+ * Class CustomException
+ * @package Iit\HyLib\Exceptions
+ */
 class CustomException extends Exception
 {
-    protected $customMessage;
+    /**
+     * @var string
+     */
+    protected string $customMessage;
 
-    protected $errorCode;
+    /**
+     * @var int
+     */
+    protected int $errorCode;
 
-    protected $statusCode;
+    /**
+     * @var int
+     */
+    protected int $statusCode;
 
-    protected $data;
+    /**
+     * @var array
+     */
+    protected array $data;
 
-    protected $headers;
+    /**
+     * @var array
+     */
+    protected array $headers;
 
-    protected $debug;
+    /**
+     * @var array
+     */
+    protected array $debug;
 
+    /**
+     * CustomException constructor.
+     * @param $message
+     * @param int $errorCode
+     * @param int $statusCode
+     * @param array $data
+     * @param array $headers
+     * @param array $debug
+     */
     public function __construct($message, $errorCode = 1, $statusCode = 500, $data = [], $headers = [], $debug = [])
     {
         $this->customMessage = $message;
@@ -35,7 +64,7 @@ class CustomException extends Exception
      *
      * @return integer
      */
-    protected function errorCode()
+    protected function errorCode(): int
     {
         return $this->errorCode;
     }
@@ -45,7 +74,7 @@ class CustomException extends Exception
      *
      * @return string
      */
-    protected function message()
+    protected function message(): string
     {
         return $this->customMessage;
     }
@@ -55,7 +84,7 @@ class CustomException extends Exception
      *
      * @return array|null
      */
-    protected function debug()
+    protected function debug(): ?array
     {
         return $this->debug;
     }
@@ -65,7 +94,7 @@ class CustomException extends Exception
      *
      * @return int
      */
-    protected function statusCode()
+    protected function statusCode(): int
     {
         return $this->statusCode;
     }
@@ -75,7 +104,7 @@ class CustomException extends Exception
      *
      * @return array
      */
-    protected function headers()
+    protected function headers(): array
     {
         return $this->headers;
     }
@@ -85,7 +114,7 @@ class CustomException extends Exception
      *
      * @return array|null
      */
-    protected function data()
+    protected function data(): ?array
     {
         return $this->data;
     }

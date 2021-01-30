@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Traits;
+namespace Iit\HyLib\Traits;
 
 use Symfony\Component\HttpFoundation\HeaderBag;
 
@@ -10,8 +10,7 @@ trait HeaderToBag
     /**
      * @var HeaderBag
      */
-
-    public $headers;
+    public HeaderBag $headers;
 
     /**
      * @param array $headers

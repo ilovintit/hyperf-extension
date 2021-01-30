@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Contracts;
+namespace Iit\HyLib\Contracts;
 
-use App\Extension\Exceptions\CustomException;
+use Iit\HyLib\Exceptions\CustomException;
 use GuzzleHttp\Client;
 use Hyperf\Guzzle\ClientFactory;
 

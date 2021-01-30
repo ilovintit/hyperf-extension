@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Utils;
 
 use Hyperf\Logger\LoggerFactory;
 use Hyperf\Utils\ApplicationContext;
@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Class Log
- * @package App\Extension\Utils
+ * @package Iit\HyLib\Utils
  * @method static emergency($message, array $context = [])
  * @method static alert($message, array $context = [])
  * @method static critical($message, array $context = [])

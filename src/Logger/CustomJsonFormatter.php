@@ -2,7 +2,7 @@
 
 namespace Iit\HyLib\Logger;
 
-use App\Extension\Utils\Log;
+use Iit\HyLib\Utils\Log;
 use Exception;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Contracts\Arrayable;

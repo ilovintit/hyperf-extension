@@ -7,24 +7,25 @@ use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Database\Model\Model;
 
+/**
+ * Trait EventQueryModelTrait
+ * @package Iit\HyLib\Contracts
+ */
 trait EventQueryModelTrait
 {
     /**
-     * @var Model
+     * @var Model|null
      */
-
-    public $currentModel;
+    public ?Model $currentModel;
 
     /**
      * @var string
      */
-
-    public $code;
+    public string $code;
 
     /**
      * @param $code
      */
-
     public function query($code)
     {
         $this->code = $code;
@@ -36,14 +37,12 @@ trait EventQueryModelTrait
     /**
      * @return Builder
      */
-
-    abstract protected function queryModel();
+    abstract protected function queryModel(): Builder;
 
     /**
      * @return string
      */
-
-    protected function queryPrimary()
+    protected function queryPrimary(): string
     {
         return 'code';
     }
@@ -51,8 +50,7 @@ trait EventQueryModelTrait
     /**
      * @return string
      */
-
-    public function notFoundMessage()
+    public function notFoundMessage(): string
     {
         return '不存在的模型';
     }

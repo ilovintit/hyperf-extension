@@ -1,19 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Exceptions;
 
 use Throwable;
 
 abstract class Exception extends \RuntimeException implements Throwable
 {
-    private $statusCode;
-    private $headers;
+    /**
+     * @var int
+     */
+    private int $statusCode;
+
+    /**
+     * @var array
+     */
+    private array $headers;
 
     /**
      * 构造函数
      */
-
     public function __construct()
     {
         $this->statusCode = $this->statusCode() ? $this->statusCode() : 500;
@@ -27,54 +33,47 @@ abstract class Exception extends \RuntimeException implements Throwable
      *
      * @return integer
      */
-
-    abstract protected function errorCode();
+    abstract protected function errorCode(): int;
 
     /**
      * 错误信息提示
      *
      * @return string
      */
-
-    abstract protected function message();
+    abstract protected function message(): string;
 
     /**
      * 固定调试信息
      *
      * @return array|null
      */
-
-    abstract protected function debug();
+    abstract protected function debug(): ?array;
 
     /**
      * Http状态码
      *
      * @return int
      */
-
-    abstract protected function statusCode();
+    abstract protected function statusCode(): int;
 
     /**
      * 头部信息
      *
      * @return array
      */
-
-    abstract protected function headers();
+    abstract protected function headers(): array;
 
     /**
      * 内容信息
      *
      * @return array|null
      */
-
-    abstract protected function data();
+    abstract protected function data(): ?array;
 
     /**
      * @return int
      */
-
-    public function getErrorCode()
+    public function getErrorCode(): int
     {
         return intval($this->errorCode()) === 0 ? 99999 : $this->errorCode();
     }
@@ -85,7 +84,7 @@ abstract class Exception extends \RuntimeException implements Throwable
      * @return array|null
      */
 
-    public function getDebug()
+    public function getDebug(): ?array
     {
         return $this->debug() ? (is_array($this->debug()) ? $this->debug() : [$this->debug()]) : [];
     }
@@ -96,7 +95,7 @@ abstract class Exception extends \RuntimeException implements Throwable
      * @return string
      */
 
-    public function getDebugAsString()
+    public function getDebugAsString(): string
     {
         return collect($this->getDebug())->map(function ($value, $key) {
             return $key . ":" . $value;
@@ -109,7 +108,7 @@ abstract class Exception extends \RuntimeException implements Throwable
      * @return array|null
      */
 
-    public function getData()
+    public function getData(): ?array
     {
         return is_array(collect($this->data())->toArray()) ? $this->data() : [];
     }
@@ -119,7 +118,7 @@ abstract class Exception extends \RuntimeException implements Throwable
      *
      * @return int An HTTP response status code
      */
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return $this->statusCode;
     }
@@ -129,7 +128,7 @@ abstract class Exception extends \RuntimeException implements Throwable
      *
      * @return array Response headers
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers;
     }

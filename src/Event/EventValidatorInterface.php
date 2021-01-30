@@ -3,17 +3,19 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Contracts;
 
+/**
+ * Interface EventValidatorInterface
+ * @package Iit\HyLib\Contracts
+ */
 interface EventValidatorInterface
 {
     /**
      * @return array
      */
-
-    public function rules();
+    public function rules(): array;
 
     /**
      * @return array
      */
-
-    public function messages();
+    public function messages(): array;
 }

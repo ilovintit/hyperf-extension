@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Model;
 
 use Carbon\Carbon;
 use Closure;
@@ -11,124 +12,110 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\Collection;
 use Psr\Log\InvalidArgumentException;
 
+/**
+ * Class ListQueryBuilder
+ * @package Iit\HyLib\Model
+ */
 class ListQueryBuilder
 {
     const ORDER_TYPE_ASC = 'asc';
+
     const ORDER_TYPE_DESC = 'desc';
 
     /**
      * @var Builder
      */
-
-    private $baseQuery;
+    private Builder $baseQuery;
 
     /**
      * @var Builder
      */
-
-    private $query;
+    private Builder $query;
 
     /**
      * @var RequestInterface
      */
-
-    private $request;
-
-    /**
-     * @var string
-     */
-
-    private $pageKey = 'X-Page';
+    private RequestInterface $request;
 
     /**
      * @var string
      */
-
-    private $perPageKey = 'X-Per-Page';
-
-    /**
-     * @var string
-     */
-
-    private $orderFieldKey = 'X-Order-Field';
+    private string $pageKey = 'X-Page';
 
     /**
      * @var string
      */
-
-    private $orderTypeKey = 'X-Order-Type';
+    private string $perPageKey = 'X-Per-Page';
 
     /**
      * @var string
      */
+    private string $orderFieldKey = 'X-Order-Field';
 
-    private $searchKeywordKey = 'X-Search-Keywords';
+    /**
+     * @var string
+     */
+    private string $orderTypeKey = 'X-Order-Type';
+
+    /**
+     * @var string
+     */
+    private string $searchKeywordKey = 'X-Search-Keywords';
 
     /**
      * @var integer
      */
-
-    private $perPage;
+    private int $perPage;
 
     /**
      * @var integer
      */
-
-    private $page;
-
-    /**
-     * @var bool
-     */
-
-    private $withPage = false;
-
-    /**
-     * @var array
-     */
-
-    private $searchRules = [];
+    private int $page;
 
     /**
      * @var bool
      */
+    private bool $withPage = false;
 
-    private $isEmptySearch = false;
+    /**
+     * @var array
+     */
+    private array $searchRules = [];
 
     /**
      * @var bool
      */
+    private bool $isEmptySearch = false;
 
-    private $isCountBaseQuery = false;
+    /**
+     * @var bool
+     */
+    private bool $isCountBaseQuery = false;
 
     /**
      * @var array
      */
-
-    private $hidden = [];
-
-    /**
-     * @var array
-     */
-
-    private $append = [];
+    private array $hidden = [];
 
     /**
      * @var array
      */
-
-    private $visible = [];
-
-    /**
-     * @var array
-     */
-
-    private $needField = [];
+    private array $append = [];
 
     /**
      * @var array
      */
+    private array $visible = [];
 
-    private $searchKeywords = [];
+    /**
+     * @var array
+     */
+    private array $needField = [];
+
+    /**
+     * @var array
+     */
+    private array $searchKeywords = [];
 
 
     /**
@@ -137,8 +124,6 @@ class ListQueryBuilder
      * @param RequestInterface $request
      * @param array $configs
      */
-
-
     public function __construct(Builder $query, RequestInterface $request, $configs = [])
     {
         $this->setRequest($request);
@@ -152,8 +137,7 @@ class ListQueryBuilder
      * @param array $configs
      * @return ListQueryBuilder
      */
-
-    public static function create(Builder $query, $configs = [])
+    public static function create(Builder $query, $configs = []): ListQueryBuilder
     {
         return make(self::class, ['query' => $query, 'configs' => $configs]);
     }
@@ -161,7 +145,6 @@ class ListQueryBuilder
     /**
      * @param $configs
      */
-
     protected function resolveConfigs(array $configs)
     {
         collect([
@@ -175,8 +158,7 @@ class ListQueryBuilder
      * @param RequestInterface $request
      * @return $this
      */
-
-    public function setRequest(RequestInterface $request)
+    public function setRequest(RequestInterface $request): ListQueryBuilder
     {
         $this->request = $request;
         return $this;
@@ -185,8 +167,7 @@ class ListQueryBuilder
     /**
      * @return RequestInterface
      */
-
-    public function getRequest()
+    public function getRequest(): RequestInterface
     {
         return $this->request;
     }
@@ -195,8 +176,7 @@ class ListQueryBuilder
      * @param Builder $query
      * @return $this
      */
-
-    public function setQuery(Builder $query)
+    public function setQuery(Builder $query): ListQueryBuilder
     {
         $this->query = $query;
         return $this;
@@ -205,8 +185,7 @@ class ListQueryBuilder
     /**
      * @return Builder
      */
-
-    public function query()
+    public function query(): Builder
     {
         $query = $this->query;
         if ($this->withPage === true) {
@@ -218,8 +197,7 @@ class ListQueryBuilder
     /**
      * @return Builder
      */
-
-    public function getQuery()
+    public function getQuery(): Builder
     {
         return $this->query;
     }
@@ -228,8 +206,7 @@ class ListQueryBuilder
      * @param Builder $query
      * @return $this
      */
-
-    public function setBaseQuery(Builder $query)
+    public function setBaseQuery(Builder $query): ListQueryBuilder
     {
         $this->baseQuery = $query;
         return $this;
@@ -238,8 +215,7 @@ class ListQueryBuilder
     /**
      * @return Builder
      */
-
-    public function getBaseQuery()
+    public function getBaseQuery(): Builder
     {
         return $this->baseQuery;
     }
@@ -248,8 +224,7 @@ class ListQueryBuilder
      * @param array $searchKeywords
      * @return $this
      */
-
-    public function setSearchKeywords(array $searchKeywords)
+    public function setSearchKeywords(array $searchKeywords): ListQueryBuilder
     {
         $this->searchKeywords = $searchKeywords;
         return $this;
@@ -258,7 +233,6 @@ class ListQueryBuilder
     /**
      * @return array
      */
-
     public function getSearchKeywords()
     {
         if (empty($this->searchKeywords)) {
@@ -272,8 +246,7 @@ class ListQueryBuilder
      * @param $value
      * @return ListQueryBuilder
      */
-
-    public function addSearchKeyword($key, $value)
+    public function addSearchKeyword($key, $value): ListQueryBuilder
     {
         $searchKeywords = $this->getSearchKeywords();
         $searchKeywords[$key] = $value;
@@ -285,8 +258,7 @@ class ListQueryBuilder
      * @param $key
      * @return ListQueryBuilder
      */
-
-    public function removeSearchKeyword($key)
+    public function removeSearchKeyword($key): ListQueryBuilder
     {
         $searchKeywords = $this->getSearchKeywords();
         unset($searchKeywords[$key]);
@@ -299,8 +271,7 @@ class ListQueryBuilder
      * @param int $defaultPage
      * @return $this
      */
-
-    public function withPage($defaultPerPage = 10, $defaultPage = 1)
+    public function withPage($defaultPerPage = 10, $defaultPage = 1): ListQueryBuilder
     {
         $this->perPage = !empty($this->request->getHeaderLine($this->perPageKey)) ? $this->request->getHeaderLine($this->perPageKey) : $defaultPerPage;
         $this->page = !empty($this->request->getHeaderLine($this->pageKey)) ? $this->request->getHeaderLine($this->pageKey) : $defaultPage;
@@ -314,8 +285,7 @@ class ListQueryBuilder
      * @param array $allowOrderFiled
      * @return $this
      */
-
-    public function withOrder(string $defaultOrderField, $defaultOrderType = self::ORDER_TYPE_DESC, array $allowOrderFiled = [])
+    public function withOrder(string $defaultOrderField, $defaultOrderType = self::ORDER_TYPE_DESC, array $allowOrderFiled = []): ListQueryBuilder
     {
         if (!in_array($defaultOrderType, [self::ORDER_TYPE_ASC, self::ORDER_TYPE_DESC])) {
             throw new InvalidArgumentException('default order type is valid.');
@@ -332,7 +302,6 @@ class ListQueryBuilder
      * @param $orderField
      * @return null
      */
-
     protected function checkOrderFieldIsAllow($allowOrderFiled, $orderField)
     {
         foreach ($allowOrderFiled as $key => $value) {
@@ -350,35 +319,30 @@ class ListQueryBuilder
      * @param Closure|null $customQuery
      * @return $this
      */
-
-    public function withSearch(array $searchRules, $allowEmpty = true, Closure $customQuery = null)
+    public function withSearch(array $searchRules, $allowEmpty = true, Closure $customQuery = null): ListQueryBuilder
     {
         if ($this->checkSearchKeywordsIsAllEmpty() && $allowEmpty === false) {
             $this->isEmptySearch = true;
             return $this;
         }
         $this->query = SearchKeyword::query($this->getSearchKeywords(), $this->query, $searchRules, $customQuery);
-        logs()->info('search sql:' . $this->query->toSql());
         return $this;
     }
 
     /**
-     * @return array|mixed|string
+     * @return array
      */
-
-    protected function getSearchKeywordsFromRequest()
+    protected function getSearchKeywordsFromRequest(): array
     {
         $searchKeywords = !empty($this->request->getHeaderLine($this->searchKeywordKey)) ? $this->request->getHeaderLine($this->searchKeywordKey) : null;
         $searchKeywords = !empty($searchKeywords) ? json_decode(base64_decode($searchKeywords), true) : [];
-        logs()->info('search keywords', $searchKeywords);
         return $searchKeywords;
     }
 
     /**
      * @return bool
      */
-
-    protected function checkSearchKeywordsIsAllEmpty()
+    protected function checkSearchKeywordsIsAllEmpty(): bool
     {
         $searchKeywords = $this->getSearchKeywords();
         if (empty($searchKeywords)) {
@@ -403,8 +367,7 @@ class ListQueryBuilder
      * @param array $needField
      * @return $this
      */
-
-    public function withFilterField(array $needField)
+    public function withFilterField(array $needField): ListQueryBuilder
     {
         $this->needField = $needField;
         return $this;
@@ -414,8 +377,7 @@ class ListQueryBuilder
      * @param array $hidden
      * @return $this
      */
-
-    public function withHidden(array $hidden)
+    public function withHidden(array $hidden): ListQueryBuilder
     {
         $this->hidden = $hidden;
         return $this;
@@ -425,8 +387,7 @@ class ListQueryBuilder
      * @param array $append
      * @return $this
      */
-
-    public function withAppends(array $append)
+    public function withAppends(array $append): ListQueryBuilder
     {
         $this->append = $append;
         return $this;
@@ -436,8 +397,7 @@ class ListQueryBuilder
      * @param array $visible
      * @return ListQueryBuilder
      */
-
-    public function withVisible(array $visible)
+    public function withVisible(array $visible): ListQueryBuilder
     {
         $this->visible = $visible;
         return $this;
@@ -446,8 +406,7 @@ class ListQueryBuilder
     /**
      * @return $this
      */
-
-    public function withCountBaseQuery()
+    public function withCountBaseQuery(): ListQueryBuilder
     {
         $this->isCountBaseQuery = true;
         return $this;
@@ -456,7 +415,6 @@ class ListQueryBuilder
     /**
      * @return array|Builder[]|Collection
      */
-
     public function get()
     {
         if ($this->isEmptySearch) {
@@ -468,7 +426,6 @@ class ListQueryBuilder
     /**
      * @return array|LengthAwarePaginatorInterface
      */
-
     public function paginate()
     {
         if ($this->isEmptySearch) {
@@ -481,8 +438,7 @@ class ListQueryBuilder
      * @param $list
      * @return array
      */
-
-    protected function convertList($list)
+    protected function convertList($list): array
     {
         return array_map(function (Model $item) {
             if (!empty($this->hidden)) {
@@ -514,8 +470,7 @@ class ListQueryBuilder
     /**
      * @return int
      */
-
-    public function countBaseQuery()
+    public function countBaseQuery(): int
     {
         return $this->baseQuery->count();
     }
@@ -523,8 +478,7 @@ class ListQueryBuilder
     /**
      * @return array
      */
-
-    public function getList()
+    public function getList(): array
     {
         return $this->convertList($this->get());
     }
@@ -532,8 +486,7 @@ class ListQueryBuilder
     /**
      * @return array
      */
-
-    public function paginateList()
+    public function paginateList(): array
     {
         $pageList = $this->paginate();
         $returnList = [

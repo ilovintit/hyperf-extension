@@ -18,7 +18,6 @@ abstract class QueryEvent extends AbstractEvent
      * @param $code
      * @param array $headers
      */
-
     public function __construct($code, $headers = [])
     {
         $this->headerToBag($headers);
@@ -28,7 +27,7 @@ abstract class QueryEvent extends AbstractEvent
     /**
      * @return string
      */
-    public function successMessage()
+    public function successMessage(): string
     {
         return '查询成功';
     }
@@ -36,7 +35,7 @@ abstract class QueryEvent extends AbstractEvent
     /**
      * @return string
      */
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '查询失败';
     }

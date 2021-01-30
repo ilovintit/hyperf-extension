@@ -15,7 +15,6 @@ abstract class UpdateEvent extends ValidatorEvent
      * @param array $input
      * @param array $headers
      */
-
     public function __construct($code, array $input, $headers = [])
     {
         $this->query($code);
@@ -26,8 +25,7 @@ abstract class UpdateEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    public function successMessage()
+    public function successMessage(): string
     {
         return '保存成功';
     }
@@ -35,8 +33,7 @@ abstract class UpdateEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '保存失败';
     }

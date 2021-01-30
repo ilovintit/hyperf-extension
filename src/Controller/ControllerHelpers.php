@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Traits;
+namespace Iit\HyLib\Controller;
 
-use App\Utils\Event;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Middleware;
+namespace Iit\HyLib\Middleware;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Codec\Json;

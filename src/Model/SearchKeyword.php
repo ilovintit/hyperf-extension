@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Model;
 
 use Carbon\Carbon;
 use Closure;
+use Exception;
 use Hyperf\Database\Model\Builder;
 use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Str;
@@ -12,7 +14,7 @@ use InvalidArgumentException;
 
 /**
  * Class SearchKeyword
- * @package ZhiEq\Utils
+ * @package Iit\HyLib\Model
  */
 class SearchKeyword
 {
@@ -39,18 +41,15 @@ class SearchKeyword
      * @param Closure|null $customQuery
      * @return Builder
      */
-
-    public static function query($searchKeywords, $query, array $rules, Closure $customQuery = null)
+    public static function query($searchKeywords, $query, array $rules, Closure $customQuery = null): Builder
     {
         /**
          * @var Builder $query
          */
         return $query->where(function (Builder $subQuery) use ($searchKeywords, $rules, $customQuery) {
             foreach ($rules as $rule) {
-                logs()->info('action rule', $rule);
                 $subQuery = SearchKeyword::getQueryByRuleFromRequest($searchKeywords, $rule, $subQuery);
             }
-            logs()->info('search query sql:', ['sql' => $subQuery->toSql()]);
             if ($customQuery === null) {
                 return $subQuery;
             }
@@ -64,10 +63,9 @@ class SearchKeyword
      * @param $searchKeywords
      * @param $rule
      * @param Builder $subQuery
-     * @return mixed
+     * @return Builder
      */
-
-    public static function getQueryByRuleFromRequest($searchKeywords, $rule, Builder $subQuery)
+    public static function getQueryByRuleFromRequest($searchKeywords, $rule, Builder $subQuery): Builder
     {
         if (!isset($rule['type'])) {
             throw new InvalidArgumentException('search keyword rule type required');
@@ -80,13 +78,10 @@ class SearchKeyword
             return $subQuery;
         }
         $method = 'getQueryBy' . Str::studly($ruleType) . 'Rule';
-        //
         if (self::isSpecialType($ruleType)) {
             return self::$method($searchKeywords, $rule, $subQuery);
         }
         list($queryKey, $convertValue) = self::convertAndFilterValue($rule, $searchKeywords);
-        //
-        logs()->info('convert-and-filter-value-result', ['queryKey' => $queryKey, 'value' => $convertValue]);
         return $convertValue === null ? $subQuery : self::$method($queryKey, $convertValue, $subQuery);
     }
 
@@ -95,35 +90,24 @@ class SearchKeyword
      * @param $searchKeywords
      * @return array
      */
-
-    protected static function convertAndFilterValue($rule, $searchKeywords)
+    protected static function convertAndFilterValue($rule, $searchKeywords): array
     {
-        //
         if (isset($rule['value']) && is_array($rule['key'])) {
             return [null, null];
         }
-        //
         if (isset($rule['value']) && isset($rule['key'])) {
-            logs()->info('fixed value rule', ['rule' => $rule]);
             $value = $rule['value'] instanceof Closure ? $rule['value']($searchKeywords, $rule) : $rule['value'];
-            logs()->info('fixed value result', ['value' => $value]);
             return $value === null ? [null, null] : [$rule['key'], $value];
         }
-        //
         list($readKey, $queryKey) = self::checkValue($searchKeywords, self::convertRuleKeyToKey($rule));
-        logs()->info('key info', ['readKey' => $readKey, 'queryKey' => $queryKey]);
         if ($readKey === null || $queryKey === null) {
             return [null, null];
         }
-        //
-        logs()->info('begin filter value');
         $value = self::filterValue($searchKeywords, $readKey, $rule);
         if ($value === null) {
             return [null, null];
         }
-        //
         $value = self::convertValue($searchKeywords, $rule, $readKey, $value);
-        logs()->info('value', ['value' => $value]);
         return empty($value) && $value !== 0 ? [null, null] : [self::convertQueryKey($queryKey, $rule), $value];
     }
 
@@ -132,8 +116,7 @@ class SearchKeyword
      * @param $rule
      * @return string
      */
-
-    protected static function convertQueryKey($queryKey, $rule)
+    protected static function convertQueryKey($queryKey, $rule): string
     {
         return isset($rule['table']) && !empty($rule['table']) ? $rule['table'] . '.' . $queryKey : $queryKey;
     }
@@ -142,8 +125,7 @@ class SearchKeyword
      * @param $type
      * @return bool
      */
-
-    protected static function isSpecialType($type)
+    protected static function isSpecialType($type): bool
     {
         $specialType = [
             self::SEARCH_KEYWORD_TYPE_BETWEEN,
@@ -161,8 +143,7 @@ class SearchKeyword
      * @param $rule
      * @return array|null
      */
-
-    protected static function convertRuleKeyToKey($rule)
+    protected static function convertRuleKeyToKey($rule): ?array
     {
         if (!isset($rule['key'])) {
             throw new InvalidArgumentException('search keyword rule key required');
@@ -181,8 +162,7 @@ class SearchKeyword
      * @param $arrayKey
      * @return array
      */
-
-    protected static function checkValue($searchKeywords, $arrayKey)
+    protected static function checkValue($searchKeywords, $arrayKey): array
     {
         if (count($arrayKey) > 1) {
             $arrayKey = collect($arrayKey)->filter(function ($value, $key) use ($searchKeywords) {
@@ -190,7 +170,6 @@ class SearchKeyword
                 return isset($searchKeywords[$readKey]) && !empty($searchKeywords[$readKey]);
             })->values()->toArray();
         }
-        logs()->info('array key info', $arrayKey);
         if (count($arrayKey) === 1 && isset($arrayKey[0])) {
             return [$arrayKey[0], $arrayKey[0]];
         } else if (count($arrayKey) === 1 && !isset($arrayKey[0])) {
@@ -208,8 +187,7 @@ class SearchKeyword
      * @param $key
      * @return array
      */
-
-    protected static function checkBetweenValue($searchKeyword, $key)
+    protected static function checkBetweenValue($searchKeyword, $key): array
     {
         if (self::checkValueIssetAndEmpty($searchKeyword, $key) === null) {
             return [null, null];
@@ -227,9 +205,8 @@ class SearchKeyword
      * @param $searchKeywords
      * @param $filterKey
      * @param $rule
-     * @return null
+     * @return null|string|int
      */
-
     protected static function filterValue($searchKeywords, $filterKey, $rule)
     {
         if (self::checkValueIssetAndEmpty($searchKeywords, $filterKey) === null) {
@@ -247,17 +224,14 @@ class SearchKeyword
         } else {
             $filterNewKey = $filterKey;
         }
-        logs()->info('filter new key:' . $filterNewKey);
         if (isset($rule['filter'][$filterKey])) {
             $rules = [$filterNewKey => $rule['filter'][$filterKey]];
         } else {
             $rules = [$filterNewKey => $rule['filter']];
         }
-        logs()->info('last rules', $rules);
         $validator = ApplicationContext::getContainer()
             ->get(ValidatorFactoryInterface::class)
             ->make($searchKeywords, $rules);
-        logs()->info('filter error', $validator->errors()->toArray());
         if ($validator->errors()->isEmpty()) {
             return self::checkValueEmpty($searchKeywords[$filterKey]);
         }
@@ -268,9 +242,8 @@ class SearchKeyword
      * 检测值是否为空
      *
      * @param $value
-     * @return null
+     * @return null|string|int
      */
-
     protected static function checkValueEmpty($value)
     {
         return (empty($value) && $value !== 0) ? null : $value;
@@ -281,8 +254,7 @@ class SearchKeyword
      * @param $key
      * @return bool|null
      */
-
-    public static function checkValueIssetAndEmpty($dataList, $key)
+    public static function checkValueIssetAndEmpty($dataList, $key): ?bool
     {
         return isset($dataList[$key]) ? (empty($dataList[$key]) ? null : true) : null;
     }
@@ -294,7 +266,6 @@ class SearchKeyword
      * @param $value
      * @return mixed
      */
-
     protected static function convertValue($searchKeywords, $rule, $key, $value)
     {
         if (!isset($rule['convert']) || empty($rule['convert'])) {
@@ -312,10 +283,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByLikeRule($queryKey, $value, $subQuery)
+    protected static function getQueryByLikeRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, 'like', '%' . $value . '%');
     }
@@ -326,10 +296,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByMatchRule($queryKey, $value, $subQuery)
+    protected static function getQueryByMatchRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '=', $value);
     }
@@ -340,12 +309,10 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByInRule($queryKey, $value, $subQuery)
+    protected static function getQueryByInRule($queryKey, $value, Builder $subQuery): Builder
     {
-        logs()->info('query by in rule', ['queryKey' => $queryKey, 'value' => $value]);
         if (is_string($value)) {
             $value = [$value];
         }
@@ -355,17 +322,15 @@ class SearchKeyword
         return $subQuery->whereIn($queryKey, $value);
     }
 
-
     /**
      * 大于条件
      *
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByMoreRule($queryKey, $value, $subQuery)
+    protected static function getQueryByMoreRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '>', $value);
     }
@@ -376,10 +341,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByLessRule($queryKey, $value, $subQuery)
+    protected static function getQueryByLessRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '<', $value);
     }
@@ -390,10 +354,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByMoreOrEqualRule($queryKey, $value, $subQuery)
+    protected static function getQueryByMoreOrEqualRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '>=', $value);
     }
@@ -404,10 +367,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByLessOrEqualRule($queryKey, $value, $subQuery)
+    protected static function getQueryByLessOrEqualRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '<=', $value);
     }
@@ -418,10 +380,9 @@ class SearchKeyword
      * @param $queryKey
      * @param $value
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByNotEqualRule($queryKey, $value, $subQuery)
+    protected static function getQueryByNotEqualRule($queryKey, $value, Builder $subQuery): Builder
     {
         return $subQuery->where($queryKey, '<>', $value);
     }
@@ -431,11 +392,9 @@ class SearchKeyword
      * @param $rule
      * @return array|null
      */
-
-    protected static function getBetweenValue($searchKeywords, $rule)
+    protected static function getBetweenValue($searchKeywords, $rule): ?array
     {
         $keys = self::convertRuleKeyToKey($rule);//找出搜索关键词
-        logs()->info('between rule keys info', $keys);
         if (isset($rule['value'])) {
             $value = $rule['value'] instanceof Closure ? $rule['value']($searchKeywords, $rule) : $rule['value'];
             if ($value === null || !is_array($value) || count($value) !== 2) {
@@ -448,16 +407,14 @@ class SearchKeyword
         $filterKeys = collect($keys)->filter(function ($value, $key) use ($searchKeywords) {
             list($beginValue, $endValue) = self::checkBetweenValue($searchKeywords, is_numeric($key) ? $value : $key);
             return !empty($beginValue) && !empty($endValue);
-        });//找出搜索内容不为空的搜索条件
-        logs()->info('filter between keys', $filterKeys->toArray());
+        });
+        //找出搜索内容不为空的搜索条件
         if ($filterKeys->count() !== 1) {
             return null;
         }
-        logs()->info('filter between keys', $filterKeys->toArray());
         //如果数组key为数字，只传数组的value
         list($readKey, $queryKey) = self::checkValue($searchKeywords, is_numeric(array_keys($filterKeys->toArray())[0]) ? array_values($filterKeys->toArray()) : $filterKeys->toArray());
         list($beginValue, $endValue) = self::filterValue($searchKeywords, $readKey, $rule);
-        logs()->info('between keys', ['queryKey' => $queryKey, 'beginValue' => $beginValue, 'endValue' => $endValue]);
         if ($beginValue === null || $endValue === null) {
             return null;
         }
@@ -472,18 +429,15 @@ class SearchKeyword
      * @param $searchKeywords
      * @param $rule
      * @param Builder $subQuery
-     * @return $this|Builder
+     * @return Builder
      */
-
-    protected static function getQueryByBetweenRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryByBetweenRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         if (!$betweenValue = self::getBetweenValue($searchKeywords, $rule)) {
             return $subQuery;
         }
-        logs()->info('between rule apply');
         list($queryKey, $beginValue, $endValue) = $betweenValue;
         return $subQuery->whereBetween($queryKey, [$beginValue, $endValue]);
-
     }
 
     /**
@@ -492,17 +446,15 @@ class SearchKeyword
      * @param $searchKeywords
      * @param $rule
      * @param Builder $subQuery
-     * @return $this|Builder
-     * @throws \Exception
+     * @return Builder
+     * @throws Exception
      */
-
-    protected static function getQueryByDateBetweenRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryByDateBetweenRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $rule['filter'] = isset($rule['filter']) ? $rule['filter'] : 'date_format:Y-m-d';
         if (!$betweenValue = self::getBetweenValue($searchKeywords, $rule)) {
             return $subQuery;
         }
-        logs()->info('date between rule apply');
         list($queryKey, $beginValue, $endValue) = $betweenValue;
         $format = isset($rule['format']) ? $rule['format'] : 'Y-m-d H:i:s';
         $beginValue = (new Carbon($beginValue))->setTime(0, 0)->format($format);
@@ -518,11 +470,9 @@ class SearchKeyword
      * @param Builder $subQuery
      * @return Builder
      */
-
-    protected static function getQueryBySubInRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryBySubInRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $subQueryFunction = isset($rule['sub']) ? $rule['sub'] : null;
-        logs()->info('sub-in-rule-sub-function', ['function' => $subQueryFunction]);
         if (empty($subQueryFunction)) {
             return $subQuery;
         }
@@ -540,11 +490,9 @@ class SearchKeyword
      * @param Builder $subQuery
      * @return Builder
      */
-
-    protected static function getQueryBySubRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryBySubRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $subQueryFunction = isset($rule['sub']) ? $rule['sub'] : null;
-        logs()->info('sub-rule-sub-function', ['function' => $subQueryFunction]);
         if (empty($subQueryFunction)) {
             return $subQuery;
         }
@@ -559,8 +507,7 @@ class SearchKeyword
      * @param $trueValue
      * @return bool
      */
-
-    protected static function checkValueIsTrue($value, $trueValue)
+    protected static function checkValueIsTrue($value, $trueValue): bool
     {
         $isNull = false;
         if (is_array($trueValue)) {
@@ -580,8 +527,7 @@ class SearchKeyword
      * @param Builder $subQuery
      * @return Builder
      */
-
-    protected static function getQueryByIsNullRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryByIsNullRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $trueValue = isset($rule['trueValue']) ? $rule['trueValue'] : null;
         list($queryKey, $convertValue) = self::convertAndFilterValue($rule, $searchKeywords);
@@ -596,8 +542,7 @@ class SearchKeyword
      * @param Builder $subQuery
      * @return Builder
      */
-
-    protected static function getQueryByIsNotNullRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryByIsNotNullRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $trueValue = isset($rule['trueValue']) ? $rule['trueValue'] : null;
         list($queryKey, $convertValue) = self::convertAndFilterValue($rule, $searchKeywords);
@@ -612,8 +557,7 @@ class SearchKeyword
      * @param Builder $subQuery
      * @return Builder
      */
-
-    protected static function getQueryByIsOrNotNullRule($searchKeywords, $rule, Builder $subQuery)
+    protected static function getQueryByIsOrNotNullRule($searchKeywords, $rule, Builder $subQuery): Builder
     {
         $trueValue = isset($rule['trueValue']) ? $rule['trueValue'] : null;
         list($queryKey, $convertValue) = self::convertAndFilterValue($rule, $searchKeywords);

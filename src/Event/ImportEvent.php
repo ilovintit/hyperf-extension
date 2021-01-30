@@ -17,8 +17,7 @@ abstract class ImportEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    public function successMessage()
+    public function successMessage(): string
     {
         return '导入成功';
     }
@@ -26,8 +25,7 @@ abstract class ImportEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '导入失败';
     }

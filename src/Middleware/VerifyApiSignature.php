@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Middleware;
+namespace Iit\HyLib\Middleware;
 
-use App\Extension\Exceptions\CustomException;
+use Iit\HyLib\Exceptions\CustomException;
 use Carbon\Carbon;
 use Exception;
 use Psr\Container\ContainerInterface;

@@ -1,25 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Traits;
+namespace Iit\HyLib\Model;
 
-use App\Extension\Exceptions\CustomException;
-use App\Utils\CodeGenerator;
-use Hyperf\Database\Model\Model;
-use Hyperf\Database\Model\SoftDeletes;
+use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\Database\Model\SoftDeletingScope;
 
 /**
  * Trait ModelCodeGenerate
- * @package App\Extension\Traits
+ * @package Iit\HyLib\Traits
  */
 trait ModelCodeGenerate
 {
     /**
      * @return string
      */
-
-    protected function generateCodeKey()
+    protected function generateCodeKey(): string
     {
         return 'code';
     }
@@ -27,8 +23,7 @@ trait ModelCodeGenerate
     /**
      * @return string
      */
-
-    protected function generateCodeUniqueKey()
+    protected function generateCodeUniqueKey(): string
     {
         return self::class . ':' . $this->generateCodePrefix();
     }
@@ -36,8 +31,7 @@ trait ModelCodeGenerate
     /**
      * @return int
      */
-
-    protected function generateCodeType()
+    protected function generateCodeType(): int
     {
         return CodeGenerator::TYPE_NUMBER_AND_LETTER;
     }
@@ -45,8 +39,7 @@ trait ModelCodeGenerate
     /**
      * @return int|null
      */
-
-    protected function generateCodeMaxLength()
+    protected function generateCodeMaxLength(): ?int
     {
         return null;
     }
@@ -54,7 +47,6 @@ trait ModelCodeGenerate
     /**
      * @return null
      */
-
     protected function generateCodeFirstMin()
     {
         return null;
@@ -63,43 +55,38 @@ trait ModelCodeGenerate
     /**
      * @return null
      */
-
     protected function generateCodeFirstMax()
     {
         return null;
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-
-    protected function generateCode()
+    protected function generateCode(): string
     {
-        return CodeGenerator::getUniqueCode($this->generateCodeUniqueKey(), function () {
-            return $this->maxCode();
-        }, $this->generateCodeLength(), $this->generateCodeType(), $this->generateCodePrefix(),
+        return CodeGenerator::getUniqueCode($this->generateCodeUniqueKey(), $this->maxCode(),
+            $this->generateCodeLength(), $this->generateCodeType(), $this->generateCodePrefix(),
             $this->generateCodeFirstMin(), $this->generateCodeFirstMax());
     }
 
     /**
-     * @return false|int|string
+     * @return string
      */
-
-    protected function maxCode()
+    protected function maxCode(): string
     {
         if ($maxModel = self::query()->withoutGlobalScope(SoftDeletingScope::class)
             ->orderByDesc($this->generateCodeKey())->first()
         ) {
             return substr($maxModel[$this->generateCodeKey()], strlen($this->generateCodePrefix()));
         }
-        return 0;
+        return '0';
     }
 
     /**
      * @return string
      */
-
-    protected function generateCodePrefix()
+    protected function generateCodePrefix(): string
     {
         $names = explode('\\', self::class);
         if (preg_match_all('/[A-Z]/', end($names), $matchItems) === 0) {
@@ -111,8 +98,7 @@ trait ModelCodeGenerate
     /**
      * @return int
      */
-
-    protected function generateCodeLength()
+    protected function generateCodeLength(): int
     {
         $maxLength = $this->generateCodeMaxLength() === null ? config('tools.model_code_length') : $this->generateCodeMaxLength();
         $length = $maxLength - strlen($this->generateCodePrefix());

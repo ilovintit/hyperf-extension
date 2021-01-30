@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Middleware;
+namespace Iit\HyLib\Middleware;
 
-use App\Extension\Util;
+use Iit\HyLib\Util;
 use Hyperf\Utils\Context;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;

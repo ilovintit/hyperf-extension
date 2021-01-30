@@ -1,23 +1,26 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Contracts;
+namespace Iit\HyLib\Contracts;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Class AbstractListener
+ * @package Iit\HyLib\Contracts
+ */
 abstract class AbstractListener implements ListenerInterface
 {
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * AbstractListener constructor.
      * @param ContainerInterface $container
      */
-
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
@@ -26,6 +29,5 @@ abstract class AbstractListener implements ListenerInterface
     /**
      * @return int
      */
-
-    abstract public static function getListenOrder();
+    abstract public static function getListenOrder(): int;
 }

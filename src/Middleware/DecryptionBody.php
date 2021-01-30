@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Middleware;
+namespace Iit\HyLib\Middleware;
 
 use App\Utils\Encryption;
 use Hyperf\Utils\Context;

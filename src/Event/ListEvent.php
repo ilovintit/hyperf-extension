@@ -5,6 +5,10 @@ namespace Iit\HyLib\Contracts;
 
 use Iit\HyLib\Traits\HeaderToBag;
 
+/**
+ * Class ListEvent
+ * @package Iit\HyLib\Contracts
+ */
 abstract class ListEvent extends AbstractEvent
 {
     use HeaderToBag;
@@ -13,7 +17,6 @@ abstract class ListEvent extends AbstractEvent
      * ListEvent constructor.
      * @param array $headers
      */
-
     public function __construct(array $headers)
     {
         $this->headerToBag($headers);
@@ -22,8 +25,7 @@ abstract class ListEvent extends AbstractEvent
     /**
      * @return string
      */
-
-    public function successMessage()
+    public function successMessage(): string
     {
         return '查询成功';
     }
@@ -31,8 +33,7 @@ abstract class ListEvent extends AbstractEvent
     /**
      * @return string
      */
-
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '查询失败';
     }

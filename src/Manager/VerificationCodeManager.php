@@ -1,47 +1,47 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Manager;
 
+use Iit\HyLib\Utils\H;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
+/**
+ * Class VerificationCodeManager
+ * @package Iit\HyLib\Manager
+ */
 class VerificationCodeManager
 {
     /**
      * @var string
      */
-
-    private $cachePrefix = 'verification_code:';
-
-    /**
-     * @var string
-     */
-
-    protected $codeId;
+    private string $cachePrefix = 'verification_code:';
 
     /**
      * @var string
      */
+    protected string $codeId;
 
-    protected $recipient;
+    /**
+     * @var string
+     */
+    protected string $recipient;
+
     /**
      * @var integer
      */
-
-    protected $code;
+    protected int $code;
 
     /**
      * @var CacheInterface
      */
-
-    private $cache;
+    private CacheInterface $cache;
 
     /**
      * VerificationCodeManager constructor.
      * @param CacheInterface $cache
      */
-
     function __construct(CacheInterface $cache)
     {
         $this->cache = $cache;
@@ -50,8 +50,7 @@ class VerificationCodeManager
     /**
      * @return int
      */
-
-    public function generateCode()
+    public function generateCode(): int
     {
         return rand(100000, 999999);
     }
@@ -60,8 +59,7 @@ class VerificationCodeManager
      * @param $codeId
      * @return string
      */
-
-    protected function getCacheKey($codeId)
+    protected function getCacheKey($codeId): string
     {
         return $this->cachePrefix . $codeId;
     }
@@ -71,8 +69,7 @@ class VerificationCodeManager
      * @return $this
      * @throws InvalidArgumentException
      */
-
-    public function setCodeId($codeId)
+    public function setCodeId($codeId): VerificationCodeManager
     {
         if ($codeId !== $this->codeId) {
             $this->codeId = $codeId;
@@ -85,8 +82,7 @@ class VerificationCodeManager
     /**
      * @return string
      */
-
-    public function getRecipient()
+    public function getRecipient(): string
     {
         return $this->recipient;
     }
@@ -94,8 +90,7 @@ class VerificationCodeManager
     /**
      * @return int
      */
-
-    public function getCode()
+    public function getCode(): int
     {
         return $this->code;
     }
@@ -107,11 +102,10 @@ class VerificationCodeManager
      * @return mixed
      * @throws InvalidArgumentException
      */
-
     public function saveCode($recipient, $code, $expiredTime = null)
     {
         $expiredTime = $expiredTime === null ? config('tools.verification_code_expired_time', 180) : $expiredTime;
-        $codeId = uuid();
+        $codeId = H::uuid();
         $this->cache->set($this->getCacheKey($codeId), json_encode([$recipient, $code]), $expiredTime);
         return $codeId;
     }
@@ -122,8 +116,7 @@ class VerificationCodeManager
      * @return array
      * @throws InvalidArgumentException
      */
-
-    public function generateAndSave($recipient, $expiredTime = null)
+    public function generateAndSave($recipient, $expiredTime = null): array
     {
         $code = $this->generateCode();
         $smsId = $this->saveCode($recipient, $code, $expiredTime);
@@ -136,8 +129,7 @@ class VerificationCodeManager
      * @return bool
      * @throws InvalidArgumentException
      */
-
-    public function validateCodeId($codeId, $recipient)
+    public function validateCodeId($codeId, $recipient): bool
     {
         return $this->setCodeId($codeId)->getRecipient() === $recipient;
     }
@@ -148,8 +140,7 @@ class VerificationCodeManager
      * @return bool
      * @throws InvalidArgumentException
      */
-
-    public function validateSaveCode($codeId, $code)
+    public function validateSaveCode($codeId, $code): bool
     {
         return $this->setCodeId($codeId)->getCode() === (int)$code;
     }
@@ -158,7 +149,6 @@ class VerificationCodeManager
      * @param $codeId
      * @throws InvalidArgumentException
      */
-
     public function destroySaveCode($codeId)
     {
         $this->cache->delete($this->getCacheKey($codeId));
@@ -171,8 +161,7 @@ class VerificationCodeManager
      * @return bool
      * @throws InvalidArgumentException
      */
-
-    public function validateAndDestroySaveCode($codeId, $code, $force = false)
+    public function validateAndDestroySaveCode($codeId, $code, $force = false): bool
     {
         $validateResult = $this->validateSaveCode($codeId, $code);
         if ($validateResult === true || $force === true) {

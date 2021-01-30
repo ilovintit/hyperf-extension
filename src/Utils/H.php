@@ -1,10 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Utils;
 
 use Ramsey\Uuid\Uuid;
 
+/**
+ * Class H
+ * @package Iit\HyLib\Utils
+ */
 class H
 {
     /**

@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Extension\Listener;
+namespace Iit\HyLib\Listener;
 
-use App\Extension\Exceptions\CustomException;
-use App\Utils\VerificationCodeManager;
+use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\Event\Annotation\Listener;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
@@ -20,13 +19,20 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
     /**
      * @var ContainerInterface
      */
-    private $container;
+    private ContainerInterface $container;
 
+    /**
+     * ValidatorFactoryResolvedListener constructor.
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @return string[]
+     */
     public function listen(): array
     {
         return [
@@ -34,6 +40,9 @@ class ValidatorFactoryResolvedListener implements ListenerInterface
         ];
     }
 
+    /**
+     * @param object $event
+     */
     public function process(object $event)
     {
         /**  @var ValidatorFactoryInterface $validatorFactory */

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Logger;
 
-use App\Extension\Utils\Log;
+use Iit\HyLib\Utils\Log;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 

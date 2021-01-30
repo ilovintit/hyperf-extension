@@ -7,12 +7,16 @@ namespace Iit\HyLib\Contracts;
 use Hyperf\Di\Annotation\Inject;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Class AbstractController
+ * @package Iit\HyLib\Contracts
+ */
 abstract class AbstractController
 {
     /**
      * @Inject
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
 }

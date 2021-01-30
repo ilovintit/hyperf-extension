@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Contracts;
 
+use Iit\HyLib\Utils\Response;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -78,9 +79,10 @@ abstract class AbstractEvent
      */
     public function toResponse(): ResponseInterface
     {
-        return $this->result === true ?
-            success($this->returnData, $this->getMessage(), $this->returnHeaders, $this->returnStatusCode) :
-            errors($this->getMessage(), $this->returnErrorCode, $this->returnData, $this->returnStatusCode, $this->returnHeaders);
+        if ($this->result === true) {
+            return Response::success($this->returnData, $this->getMessage(), $this->returnHeaders, $this->returnStatusCode);
+        }
+        return Response::error($this->getMessage(), $this->returnErrorCode, $this->returnData, $this->returnStatusCode, $this->returnHeaders);
     }
 
     /**

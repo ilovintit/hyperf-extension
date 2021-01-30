@@ -1,6 +1,7 @@
 <?php
+declare(strict_types=1);
 
-namespace App\Extension\Utils;
+namespace Iit\HyLib\Model;
 
 use Closure;
 use Hyperf\Redis\RedisFactory;
@@ -10,7 +11,7 @@ use Redis;
 
 /**
  * Class CodeGenerator
- * @package ZhiEq\Utils
+ * @package Iit\HyLib\Model
  */
 class CodeGenerator
 {
@@ -34,8 +35,7 @@ class CodeGenerator
      * @param $key
      * @return string
      */
-
-    protected static function cacheTags($key)
+    protected static function cacheTags($key): string
     {
         return config('cache.default.prefix') . 'code-generator:' . $key;
     }
@@ -44,8 +44,7 @@ class CodeGenerator
      * @param $type
      * @return array
      */
-
-    protected static function getMapList($type)
+    protected static function getMapList($type): array
     {
         if ($type === self::TYPE_ONLY_NUMBER) {
             return self::$numberMap;
@@ -59,86 +58,15 @@ class CodeGenerator
     }
 
     /**
-     * @param $max
-     * @param $len
-     * @param int $type
-     * @param string $prefix
-     * @param int $firstMin
-     * @param string $firstMax
-     * @return null|string
-     */
-
-    public static function getNext($max, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null)
-    {
-        if ($len < 1 || !is_numeric($len)) {
-            //logs()->info('$len not numeric or less one');
-            return null;
-        }
-        if (strlen($max) > $len) {
-            //logs()->info('$max code length more than to $len');
-            return null;
-        }
-        $map = self::getMapList($type);
-        $firstMin = $firstMin === null ? reset($map) : $firstMin;
-        $firstMax = $firstMax === null ? end($map) : $firstMax;
-        //logs()->info('map list', $map);
-        $max = str_pad($max, $len, '0', STR_PAD_LEFT);
-        //logs()->info('padding $max to:' . $max);
-        $first = substr($max, 0, 1);
-        //logs()->info('first letter is:' . $first);
-        $firstPosition = self::getPosition($first, $map);
-        $firstMinPosition = self::getPosition($firstMin, $map);
-        $firstMaxPosition = self::getPosition($firstMax, $map);
-        //logs()->info('map position', ['firstPosition' => $firstPosition, 'firstMinPosition' => $firstMinPosition, 'firstMaxPosition' => $firstMaxPosition]);
-        if ($firstPosition === false || $firstMinPosition === false || $firstMaxPosition === false) {
-            //logs()->info('position letter invalid');
-            return null;
-        }
-        if ($firstPosition < $firstMinPosition) {
-            $max = $firstMin . substr($max, 1, $len - 1);
-        }
-        //logs()->info('first letter check $max:' . $max);
-        if ($firstPosition > $firstMaxPosition) {
-            return null;
-        }
-        $final = [];
-        for ($i = 1; $i <= $len; $i++) {
-            $result = self::getNextCharacter($map, $max, $i);
-            //logs()->info('next character:', ['next' => $result]);
-            if ($result === false) {
-                return null;
-            }
-            if ($result !== true) {
-                $final[] = $result;
-                break;
-            }
-            if ($result === true) {
-                $final[] = $map[0];
-            }
-        }
-        //logs()->info('final str', $final);
-        $diff = $len - count($final);
-        //logs()->info('diff:' . $diff);
-        $finalStr = substr($max, 0, $diff) . implode('', array_reverse($final));
-        //logs()->info('finalStr:' . $finalStr);
-        $firstPosition = self::getPosition(substr($finalStr, 0, 1), $map);
-        //logs()->info('check final str first position:' . $firstPosition);
-        return $firstPosition > $firstMaxPosition ? null : $prefix . $finalStr;
-    }
-
-    /**
      * @param $map
      * @param $max
      * @param $reciprocal
-     * @return bool
+     * @return bool|string
      */
-
     protected static function getNextCharacter($map, $max, $reciprocal)
     {
         $character = substr($max, -$reciprocal, 1);
-        //logs()->info('search letter:' . $character);
         $now = self::getPosition($character, $map);
-        //logs()->info('search result', ['now' => $now]);
         if ($now === false) {
             return false;
         }
@@ -150,24 +78,13 @@ class CodeGenerator
      * @param $map
      * @return false|int|string
      */
-
     protected static function getPosition($character, $map)
     {
         return array_search(strtoupper($character), $map, true);
     }
 
     /**
-     * @return RedisProxy|Redis|null
-     */
-
-    protected static function redis()
-    {
-        return ApplicationContext::getContainer()->get(RedisFactory::class)->get('default');
-    }
-
-    /**
-     * @param $uniqueKey
-     * @param Closure $maxCallback
+     * @param $max
      * @param $len
      * @param int $type
      * @param string $prefix
@@ -175,26 +92,72 @@ class CodeGenerator
      * @param string $firstMax
      * @return null|string
      */
-
-    public static function getUniqueCode($uniqueKey, Closure $maxCallback, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null)
+    public static function getNext($max, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null): ?string
     {
-        $maxCode = self::redis()->incr(self::cacheTags($uniqueKey));
-        if ($maxCode === 1) {
-            $dbMax = self::convertCodeToInteger(value($maxCallback), $type);
-            if ($dbMax > $maxCode) {
-                self::redis()->set(self::cacheTags($uniqueKey), $dbMax);
-                $maxCode = $dbMax;
+        if ($len < 1 || !is_integer($len)) {
+            throw new GenerateCodeException('要求生成编码的长度必须是整数并且不能小于1');
+        }
+        if (strlen($max) > $len) {
+            throw new GenerateCodeException('传入的当前编码字符长度超过要求生成的字符长度');
+        }
+        if (empty($map = self::getMapList($type))) {
+            throw new GenerateCodeException('不支持的字符集类型');
+        }
+        $firstMin = $firstMin === null ? reset($map) : $firstMin;
+        $firstMax = $firstMax === null ? end($map) : $firstMax;
+        $max = str_pad($max, $len, '0', STR_PAD_LEFT);
+        $first = substr($max, 0, 1);
+        if (!$firstPosition = self::getPosition($first, $map)) {
+            throw new GenerateCodeException('当前编码首字符不存在于字符集内');
+        }
+        if (!$firstMinPosition = self::getPosition($firstMin, $map)) {
+            throw new GenerateCodeException('当前编码首字符最小字符不存在于字符集内');
+        }
+        if (!$firstMaxPosition = self::getPosition($firstMax, $map)) {
+            throw new GenerateCodeException('当前编码首字符最大字符不存在于字符集内');
+        }
+        if ($firstPosition < $firstMinPosition) {
+            $max = $firstMin . substr($max, 1, $len - 1);
+        }
+        if ($firstPosition > $firstMaxPosition) {
+            throw new GenerateCodeException('需要生成的编码首字符超出定义字符集的最大字符,请更改字符集或增加编码长度');
+        }
+        $final = [];
+        for ($i = 1; $i <= $len; $i++) {
+            $result = self::getNextCharacter($map, $max, $i);
+            if ($result === false) {
+                throw new GenerateCodeException('第' . $i . '位字符获取下一个字符失败');
+            }
+            if ($result !== true) {
+                $final[] = $result;
+                break;
+            }
+            if ($result === true) {
+                $final[] = $map[0];
             }
         }
-        return self::getNext(self::convertIntegerToCode($maxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
+        $diff = $len - count($final);
+        $finalStr = substr($max, 0, $diff) . implode('', array_reverse($final));
+        $firstPosition = self::getPosition(substr($finalStr, 0, 1), $map);
+        if ($firstPosition > $firstMaxPosition) {
+            throw new GenerateCodeException('生成的编码首字符超出定义字符集的最大字符,请更改字符集或增加编码长度');
+        }
+        return $prefix . $finalStr;
+    }
+
+    /**
+     * @return RedisProxy|Redis|null
+     */
+    protected static function redis()
+    {
+        return ApplicationContext::getContainer()->get(RedisFactory::class)->get('default');
     }
 
     /**
      * @param $type
-     * @return mixed|null
+     * @return int|null
      */
-
-    protected static function integerMap($type)
+    protected static function integerMap($type): ?int
     {
         $map = [
             self::TYPE_ONLY_NUMBER => 10,
@@ -207,13 +170,12 @@ class CodeGenerator
     /**
      * @param $code
      * @param $type
-     * @return float|int|null
+     * @return int
      */
-
-    public static function convertCodeToInteger($code, $type)
+    public static function convertCodeToInteger($code, $type): int
     {
         if (!$coefficient = self::integerMap($type)) {
-            return null;
+            throw new GenerateCodeException('从字符翻译数字失败');
         }
         $map = self::getMapList($type);
         $length = strlen($code);
@@ -231,13 +193,12 @@ class CodeGenerator
      * @param $integer
      * @param $type
      * @param $length
-     * @return bool|null|string
+     * @return string
      */
-
-    public static function convertIntegerToCode($integer, $type, $length)
+    public static function convertIntegerToCode($integer, $type, $length): string
     {
         if (!$coefficient = self::integerMap($type)) {
-            return null;
+            throw new GenerateCodeException('从数字翻译字符失败');
         }
         $map = self::getMapList($type);
         $code = [];
@@ -252,4 +213,24 @@ class CodeGenerator
         } while ($i <= $length);
         return implode("", array_reverse($code));
     }
+
+    /**
+     * @param $uniqueKey
+     * @param Closure|string $maxCode
+     * @param $len
+     * @param int $type
+     * @param string $prefix
+     * @param int $firstMin
+     * @param string $firstMax
+     * @return string
+     */
+    public static function getUniqueCode($uniqueKey, $maxCode, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null): ?string
+    {
+        $cacheKey = self::cacheTags($uniqueKey);
+        if (self::redis()->exists($cacheKey)) {
+            self::redis()->set($cacheKey, strval(self::convertCodeToInteger(value($maxCode), $type)));
+        }
+        return self::getNext(self::convertIntegerToCode(self::redis()->incr($cacheKey), $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
+    }
+
 }

@@ -3,13 +3,17 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Contracts;
 
+/**
+ * Class DisabledEvent
+ * @package Iit\HyLib\Contracts
+ */
 abstract class DisabledEvent extends StatusEvent
 {
 
     /**
      * @return string
      */
-    public function successMessage()
+    public function successMessage(): string
     {
         return '禁用成功';
     }
@@ -17,7 +21,7 @@ abstract class DisabledEvent extends StatusEvent
     /**
      * @return string
      */
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '禁用失败';
     }

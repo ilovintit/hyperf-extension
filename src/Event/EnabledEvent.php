@@ -13,7 +13,7 @@ abstract class EnabledEvent extends StatusEvent
     /**
      * @return string
      */
-    public function successMessage()
+    public function successMessage(): string
     {
         return '启用成功';
     }
@@ -21,7 +21,7 @@ abstract class EnabledEvent extends StatusEvent
     /**
      * @return string
      */
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '启用失败';
     }

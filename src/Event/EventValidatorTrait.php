@@ -14,13 +14,12 @@ trait EventValidatorTrait
     /**
      * @var ValidatorInterface
      */
-    public $validator;
+    public ValidatorInterface $validator;
 
     /**
      * @var array
      */
-
-    public $input;
+    public array $input;
 
     /**
      * @param array $input

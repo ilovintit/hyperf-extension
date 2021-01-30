@@ -6,6 +6,10 @@ namespace Iit\HyLib\Contracts;
 use Iit\HyLib\Traits\HeaderToBag;
 use Hyperf\Database\Model\Model;
 
+/**
+ * Class CreateEvent
+ * @package Iit\HyLib\Contracts
+ */
 abstract class CreateEvent extends ValidatorEvent
 {
     use HeaderToBag;
@@ -13,7 +17,6 @@ abstract class CreateEvent extends ValidatorEvent
     /**
      * @var Model
      */
-
     public $newModel;
 
     /**
@@ -21,7 +24,6 @@ abstract class CreateEvent extends ValidatorEvent
      * @param $input
      * @param array $headers
      */
-
     public function __construct($input, $headers = [])
     {
         $this->headerToBag($headers);
@@ -33,14 +35,12 @@ abstract class CreateEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    abstract protected function modelClass();
+    abstract protected function modelClass(): string;
 
     /**
      * @return string
      */
-
-    public function successMessage()
+    public function successMessage(): string
     {
         return '保存成功';
     }
@@ -48,8 +48,7 @@ abstract class CreateEvent extends ValidatorEvent
     /**
      * @return string
      */
-
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '保存失败';
     }

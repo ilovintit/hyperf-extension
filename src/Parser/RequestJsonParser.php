@@ -1,9 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Request;
+namespace Iit\HyLib\Parser;
 
-class JsonParser extends \Hyperf\HttpMessage\Server\Request\JsonParser
+use Hyperf\HttpMessage\Server\Request\JsonParser;
+
+/**
+ * Class RequestJsonParser
+ * @package Iit\HyLib\Request
+ */
+class RequestJsonParser extends JsonParser
 {
     public function parse(string $rawBody, string $contentType): array
     {

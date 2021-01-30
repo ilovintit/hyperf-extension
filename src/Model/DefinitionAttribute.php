@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Extension\Traits;
+namespace Iit\HyLib\Model;
 
 use Hyperf\Utils\Str;
 
 /**
  * Trait DefinitionAttribute
- * @package ZhiEq\Traits
+ * @package Iit\HyLib\Model
  */
 trait DefinitionAttribute
 {
@@ -17,10 +17,9 @@ trait DefinitionAttribute
      *
      * @param $name
      * @param $key
-     * @return null
+     * @return string|null
      */
-
-    public static function getDefinitionLabel($name, $key)
+    public static function getDefinitionLabel($name, $key): ?string
     {
         $maps = self::getDefinitionLabels($name);
         return isset($maps[$key]) ? $maps[$key] : null;
@@ -32,8 +31,7 @@ trait DefinitionAttribute
      * @param $name
      * @return array
      */
-
-    public static function getDefinitionLabels($name)
+    public static function getDefinitionLabels($name): array
     {
         $name = lcfirst($name) . 'Definition';
         if (method_exists(static::class, $name)) {
@@ -54,8 +52,7 @@ trait DefinitionAttribute
      * @param $name
      * @return array
      */
-
-    public static function getDefinitionList($name)
+    public static function getDefinitionList($name): array
     {
         return array_keys(self::getDefinitionLabels($name));
     }
@@ -65,21 +62,20 @@ trait DefinitionAttribute
      *
      * @param $method
      * @param $prefix
-     * @return bool|string
+     * @return string
      */
-
-    protected static function getDefinitionName($method, $prefix)
+    protected static function getDefinitionName($method, $prefix): string
     {
         return substr($method, 3, strpos($method, $prefix) - 3);
     }
 
     /**
+     * 检测是否满足getXXXLabel,getXXXList,getXXXLabels方法
      *
      * @param $method
      * @return bool
      */
-
-    protected static function isDefinitionMethod($method)
+    protected static function isDefinitionMethod($method): bool
     {
         return (Str::startsWith($method, 'get') && Str::endsWith($method, 'Label')) ||
             (Str::startsWith($method, 'get') && Str::endsWith($method, 'List')) ||
@@ -87,11 +83,12 @@ trait DefinitionAttribute
     }
 
     /**
+     * 根据指定规则调用getXXXLabel,getXXXList,getXXXLabels对应方法返回结果
+     *
      * @param $method
      * @param $parameters
-     * @return array|null
+     * @return array|string|null
      */
-
     protected static function callDefinitionMethod($method, $parameters)
     {
         if (Str::startsWith($method, 'get') && Str::endsWith($method, 'Label')) {
@@ -104,11 +101,12 @@ trait DefinitionAttribute
     }
 
     /**
+     * 覆盖Model的__call方法，增加本类的魔术方法
+     *
      * @param $method
      * @param $parameters
-     * @return array|null
+     * @return array|string|null
      */
-
     public function __call($method, $parameters)
     {
         if (self::isDefinitionMethod($method)) {
@@ -123,9 +121,8 @@ trait DefinitionAttribute
      *
      * @param $method
      * @param $parameters
-     * @return array|null
+     * @return array|string|null
      */
-
     public static function __callStatic($method, $parameters)
     {
         if ($definition = self::callDefinitionMethod($method, $parameters)) {

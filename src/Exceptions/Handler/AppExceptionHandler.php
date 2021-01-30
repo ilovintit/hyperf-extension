@@ -8,29 +8,42 @@ use Iit\HyLib\Auth\Exception\AuthenticationException;
 use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\Validation\ValidationException;
+use Iit\HyLib\Utils\Log;
+use Iit\HyLib\Utils\Response;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
+/**
+ * Class AppExceptionHandler
+ * @package Iit\HyLib\Exceptions\Handler
+ */
 class AppExceptionHandler extends ExceptionHandler
 {
 
-    public function handle(Throwable $throwable, ResponseInterface $response)
+    /**
+     * @param Throwable $throwable
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function handle(Throwable $throwable, ResponseInterface $response): ResponseInterface
     {
-        logs()->error(sprintf('%s [%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()), [
-            'exception' => $throwable
-        ]);
+        Log::error(sprintf('%s [%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()), ['exception' => $throwable]);
         if ($throwable instanceof CustomException) {
-            return errors($throwable);
+            return Response::error($throwable);
         }
         if ($throwable instanceof ValidationException) {
-            return errors($body = $throwable->validator->errors()->first());
+            return Response::error($body = $throwable->validator->errors()->first());
         }
         if ($throwable instanceof AuthenticationException) {
-            return errors(trans('framework.auth.unauthenticated'), 401);
+            return Response::error(trans('framework.auth.unauthenticated'), 401);
         }
-        return errors($throwable->getMessage(), $throwable->getCode());
+        return Response::error($throwable->getMessage(), $throwable->getCode());
     }
 
+    /**
+     * @param Throwable $throwable
+     * @return bool
+     */
     public function isValid(Throwable $throwable): bool
     {
         return true;

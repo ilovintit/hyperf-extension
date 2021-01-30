@@ -5,6 +5,10 @@ namespace Iit\HyLib\Contracts;
 
 use Iit\HyLib\Traits\HeaderToBag;
 
+/**
+ * Class DeleteEvent
+ * @package Iit\HyLib\Contracts
+ */
 abstract class DeleteEvent extends AbstractEvent
 {
     use EventQueryModelTrait, HeaderToBag;
@@ -14,7 +18,6 @@ abstract class DeleteEvent extends AbstractEvent
      * @param $code
      * @param array $headers
      */
-
     public function __construct($code, $headers = [])
     {
         $this->headerToBag($headers);
@@ -24,8 +27,7 @@ abstract class DeleteEvent extends AbstractEvent
     /**
      * @return string
      */
-
-    public function successMessage()
+    public function successMessage(): string
     {
         return '删除成功';
     }
@@ -33,8 +35,7 @@ abstract class DeleteEvent extends AbstractEvent
     /**
      * @return string
      */
-
-    public function failedMessage()
+    public function failedMessage(): string
     {
         return '删除失败';
     }
