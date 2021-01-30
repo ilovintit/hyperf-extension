@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\HyLib\Contracts;
+namespace Iit\HyLib\Listener;
 
 use Hyperf\Event\Contract\ListenerInterface;
 use Psr\Container\ContainerInterface;
