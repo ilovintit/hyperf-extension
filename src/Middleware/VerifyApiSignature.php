@@ -15,17 +15,26 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
+/**
+ * Class VerifyApiSignature
+ * @package Iit\HyLib\Middleware
+ */
 class VerifyApiSignature implements MiddlewareInterface
 {
-
-    protected $requiredHeaders = [
+    /**
+     * @var array|string[]
+     */
+    protected array $requiredHeaders = [
         'X-Ca-Signature-Headers',
         'X-Ca-Timestamp',
         'X-Ca-Nonce',
         'X-Ca-Signature',
     ];
 
-    protected $signElseHeaders = [
+    /**
+     * @var array|string[]
+     */
+    protected array $signElseHeaders = [
         'accept',
         'content-md5',
         'date',
@@ -34,7 +43,7 @@ class VerifyApiSignature implements MiddlewareInterface
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * @var CacheInterface
@@ -57,8 +66,7 @@ class VerifyApiSignature implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @return string
      */
-
-    protected function getContentEncode(ServerRequestInterface $request)
+    protected function getContentEncode(ServerRequestInterface $request): string
     {
         if (in_array($request->getMethod(), ['GET', 'DELETE'])) {
             return '';
@@ -72,7 +80,6 @@ class VerifyApiSignature implements MiddlewareInterface
      * @return ResponseInterface
      * @throws InvalidArgumentException
      */
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /*
@@ -136,12 +143,6 @@ class VerifyApiSignature implements MiddlewareInterface
          * 计算签名并对比请求的签名是否一致
          */
         $signature = base64_encode(hash_hmac('sha256', $signString, $signSecret, true));
-        logs()->info('api-signature-info', [
-            'signStr' => $signString,
-            'signStrHash' => sha1($signString),
-            'signSecret' => $signSecret,
-            'sign' => $signature,
-        ]);
         if ($signature !== $request->getHeaderLine('X-Ca-Signature')) {
             throw new CustomException(trans('middleware.signature.signature_invalid'), 41201, 412, ['signStr' => $signString]);
         }

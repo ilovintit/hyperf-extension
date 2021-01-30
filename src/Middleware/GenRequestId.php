@@ -1,23 +1,27 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Iit\HyLib\Middleware;
 
-use Iit\HyLib\Util;
 use Hyperf\Utils\Context;
+use Iit\HyLib\Utils\H;
+use Iit\HyLib\Utils\Log;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Class GenRequestId
+ * @package Iit\HyLib\Middleware
+ */
 class GenRequestId implements MiddlewareInterface
 {
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * GenRequestId constructor.
@@ -38,9 +42,9 @@ class GenRequestId implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$request->hasHeader('X-Request-Id')) {
-            $request = Context::set(ServerRequestInterface::class, $request->withHeader('X-Request-Id', uuid()));
+            $request = Context::set(ServerRequestInterface::class, $request->withHeader('X-Request-Id', H::uuid()));
         }
-        logs()->info('receive-request', [
+        Log::info('receive-request-info', [
             'method' => $request->getMethod(),
             'url' => $request->getUri()->__toString(),
             'headers' => $request->getHeaders(),

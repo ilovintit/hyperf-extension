@@ -7,19 +7,24 @@ namespace Iit\HyLib\Middleware;
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
+use Iit\HyLib\Utils\Arr;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Class CamelCaseOutputResponse
+ * @package Iit\HyLib\Middleware
+ */
 class CamelCaseOutputResponse implements MiddlewareInterface
 {
 
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * GenRequestId constructor.
@@ -46,8 +51,8 @@ class CamelCaseOutputResponse implements MiddlewareInterface
         $response = $handler->handle($request);
         $returnContent = $response->getBody()->getContents();
         if (!empty($returnContent) && !empty(json_decode($returnContent, true))) {
-            $response = $response->withBody(new SwooleStream(Json::encode(camel_case_array_keys(json_decode($returnContent, true)))));
-            Context::set(ResponseInterface::class, $response);
+            Context::set(ResponseInterface::class, $response
+                ->withBody(new SwooleStream(Json::encode(Arr::camelCaseArrayKeys(Json::decode($returnContent, true))))));
         }
         return $response;
     }
