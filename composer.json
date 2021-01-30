@@ -1,0 +1,35 @@
+{
+  "name": "ilovintit/hyperf-library",
+  "type": "library",
+  "description": "hyperf extension",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ilovintit",
+      "email": "ilovintit@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.2",
+    "ext-swoole": ">=4.5",
+    "ext-json": "*",
+    "ext-redis": "*",
+    "ext-openssl": "*",
+    "hyperf/cache": "~2.0.0",
+    "hyperf/command": "~2.0.0",
+    "hyperf/config": "~2.0.0",
+    "hyperf/db-connection": "~2.0.0",
+    "hyperf/framework": "~2.0.0",
+    "hyperf/http-server": "~2.0.0",
+    "hyperf/logger": "~2.0.0",
+    "hyperf/memory": "~2.0.0",
+    "hyperf/process": "~2.0.0",
+    "hyperf/redis": "~2.0.0",
+    "ramsey/uuid": "^4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Iit\\HyLib\\": "/src"
+    }
+  }
+}
