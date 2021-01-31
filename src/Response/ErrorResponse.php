@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Iit\Response;
+namespace Iit\HyLib\Response;
 
 use Hyperf\HttpMessage\Stream\SwooleStream;
 use Hyperf\Utils\Codec\Json;
