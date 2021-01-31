@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
  * Class SuccessRes
  * @package Iit\Response
  */
-class SuccessRes implements ResInterface
+class SuccessResponse implements ResInterface
 {
     /**
      * @var ResponseInterface|null

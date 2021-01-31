@@ -9,7 +9,7 @@ use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Iit\HyLib\Exceptions\Exception;
 use Iit\Response\ErrorResponse;
-use Iit\Response\SuccessRes;
+use Iit\Response\SuccessResponse;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -51,7 +51,7 @@ class Res
      */
     public static function success($data = [], $message = null, $headers = [], $statusCode = 200, $encodingOptions = JSON_UNESCAPED_UNICODE): ResponseInterface
     {
-        return make(SuccessRes::class, [$data, $message, $headers, $statusCode, $encodingOptions])->toResponse();
+        return make(SuccessResponse::class, [$data, $message, $headers, $statusCode, $encodingOptions])->toResponse();
     }
 
     /**
