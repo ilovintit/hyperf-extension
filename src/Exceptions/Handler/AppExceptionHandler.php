@@ -9,7 +9,7 @@ use Iit\HyLib\Exceptions\CustomException;
 use Hyperf\ExceptionHandler\ExceptionHandler;
 use Hyperf\Validation\ValidationException;
 use Iit\HyLib\Utils\Log;
-use Iit\HyLib\Utils\Response;
+use Iit\HyLib\Utils\Res;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -29,15 +29,15 @@ class AppExceptionHandler extends ExceptionHandler
     {
         Log::error(sprintf('%s [%s] in %s', $throwable->getMessage(), $throwable->getLine(), $throwable->getFile()), ['exception' => $throwable]);
         if ($throwable instanceof CustomException) {
-            return Response::error($throwable);
+            return Res::error($throwable);
         }
         if ($throwable instanceof ValidationException) {
-            return Response::error($body = $throwable->validator->errors()->first());
+            return Res::error($body = $throwable->validator->errors()->first());
         }
         if ($throwable instanceof AuthenticationException) {
-            return Response::error(trans('framework.auth.unauthenticated'), 401);
+            return Res::error(trans('framework.auth.unauthenticated'), 401);
         }
-        return Response::error($throwable->getMessage(), $throwable->getCode());
+        return Res::error($throwable->getMessage(), $throwable->getCode());
     }
 
     /**

@@ -7,7 +7,7 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Iit\HyLib\Utils\Log;
-use Iit\HyLib\Utils\Request;
+use Iit\HyLib\Utils\Req;
 use Redis;
 
 class SessionManager
@@ -33,8 +33,8 @@ class SessionManager
      */
     public function cacheKey(): ?string
     {
-        $sessionId = method_exists(Request::now(), 'getHeaderLine') ?
-            Request::now()->getHeaderLine('X-Ca-Applets-Session-Id') : null;
+        $sessionId = method_exists(Req::now(), 'getHeaderLine') ?
+            Req::now()->getHeaderLine('X-Ca-Applets-Session-Id') : null;
         return empty($sessionId) ? null : $sessionId;
     }
 

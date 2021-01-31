@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Event;
 
-use Iit\HyLib\Utils\Response;
+use Iit\HyLib\Utils\Res;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -80,9 +80,9 @@ abstract class AbstractEvent
     public function toResponse(): ResponseInterface
     {
         if ($this->result === true) {
-            return Response::success($this->returnData, $this->getMessage(), $this->returnHeaders, $this->returnStatusCode);
+            return Res::success($this->returnData, $this->getMessage(), $this->returnHeaders, $this->returnStatusCode);
         }
-        return Response::error($this->getMessage(), $this->returnErrorCode, $this->returnData, $this->returnStatusCode, $this->returnHeaders);
+        return Res::error($this->getMessage(), $this->returnErrorCode, $this->returnData, $this->returnStatusCode, $this->returnHeaders);
     }
 
     /**

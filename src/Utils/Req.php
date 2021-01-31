@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Class Request
  * @package Iit\HyLib\Utils
  */
-class Request
+class Req
 {
     /**
      * @return ServerRequestInterface|null

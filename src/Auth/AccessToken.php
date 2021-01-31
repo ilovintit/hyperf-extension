@@ -4,6 +4,7 @@ namespace Iit\HyLib\Auth;
 
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
+use Iit\HyLib\Utils\Res;
 use Psr\SimpleCache\InvalidArgumentException;
 
 class AccessToken
@@ -58,7 +59,7 @@ class AccessToken
     public function getToken()
     {
         return Context::override('xAccessToken', function ($token) {
-            return empty($token) ? request()->getHeaderLine($this->headerKey) : $token;
+            return empty($token) ? Res::now()->getHeaderLine($this->headerKey) : $token;
         });
     }
 

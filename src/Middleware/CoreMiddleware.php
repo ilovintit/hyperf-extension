@@ -6,10 +6,10 @@ namespace Iit\HyLib\Middleware;
 
 use Hyperf\HttpServer\Router\Dispatched;
 use Hyperf\Utils\Contracts\Arrayable;
+use Iit\HyLib\Utils\Res;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
-use \Iit\HyLib\Utils\Response as UtilResponse;
 
 /**
  * Class CoreMiddleware
@@ -33,7 +33,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
             return $response;
         }
         if ($response->getStatusCode() === 500 && !$response->hasHeader('x-error-code')) {
-            return UtilResponse::error(trans('framework.response.handler-not-exists'));
+            return Res::error(trans('framework.response.handler-not-exists'));
         }
         return $response;
     }
@@ -45,7 +45,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 
     protected function handleNotFound(ServerRequestInterface $request)
     {
-        return UtilResponse::error(trans('framework.response.not-found'), 1, [], 404);
+        return Res::error(trans('framework.response.not-found'), 1, [], 404);
     }
 
     /**
@@ -56,7 +56,7 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 
     protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
     {
-        return UtilResponse::error(trans('framework.response.method-not-allow'), 1, ['allow' => $methods], 405);
+        return Res::error(trans('framework.response.method-not-allow'), 1, ['allow' => $methods], 405);
     }
 
 }

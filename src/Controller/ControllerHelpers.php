@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Iit\HyLib\Controller;
 
 use Iit\HyLib\Utils\Event;
-use Iit\HyLib\Utils\Response;
+use Iit\HyLib\Utils\Res;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -20,7 +20,7 @@ trait ControllerHelpers
      */
     public function staticDefinition(array $definitionLabels): ResponseInterface
     {
-        return Response::success(Response::definitionToSelect($definitionLabels));
+        return Res::success(Res::definitionToSelect($definitionLabels));
     }
 
     /**
