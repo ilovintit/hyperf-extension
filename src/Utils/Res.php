@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Iit\HyLib\Utils;
 
 use Hyperf\Utils\Context;
-use Iit\Response\ErrorResponse;
-use Iit\Response\SuccessResponse;
+use Iit\HyLib\Response\ErrorResponse;
+use Iit\HyLib\Response\SuccessResponse;
 use Psr\Http\Message\ResponseInterface;
 
 /**
