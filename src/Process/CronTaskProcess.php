@@ -104,9 +104,11 @@ abstract class CronTaskProcess extends AbstractProcess
      */
     public function __call($name, $arguments)
     {
-        Str::start($name, 'log') &&
-        $this->logger->{str_replace('log', '', $name)}($this->taskKey()
-            . '-' . $arguments[0] . '/' . microtime(true), $arguments[1]);
+        if (Str::start($name, 'log')) {
+            $msg = $this->taskKey() . '-' . $arguments[0] . '/' . microtime(true);
+            $cxt = isset($arguments[1]) ? (is_array($arguments[1]) ? $arguments[1] : []) : [];
+            $this->logger->{str_replace('log', '', $name)}($msg, $cxt);
+        }
     }
 
     /**
