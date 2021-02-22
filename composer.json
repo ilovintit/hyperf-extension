@@ -35,7 +35,8 @@
     "doctrine/dbal": "^3.0",
     "intervention/image": "^2.5",
     "overtrue/wechat": "^5.4",
-    "ramsey/uuid": "^4.0"
+    "ramsey/uuid": "^4.0",
+    "xxtime/flysystem-aliyun-oss": "^1.5"
   },
   "autoload": {
     "psr-4": {

@@ -5,11 +5,11 @@ namespace Iit\HyLib\Process;
 
 use Hyperf\Process\AbstractProcess;
 use Iit\HyLib\RedisLock\RedisLock;
-use Exception;
 use Iit\HyLib\Utils\Log;
 use Iit\HyLib\Utils\Str;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Class CronTaskProcess
@@ -73,7 +73,7 @@ abstract class CronTaskProcess extends AbstractProcess
                 $this->cronTask() === self::SIGNAL_DELAY
                 && sleep($this->sleepTime());
                 $this->lock->release();
-            } catch (Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->logError('process-task-exception', ['exception' => $exception->__toString()]);
                 sleep($this->sleepTime());
                 $this->lock->release();

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfc5648b718c0d2dbe1ad96e004cad04",
+    "content-hash": "c3f787431a22ff37be39980323203bb5",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -158,16 +158,16 @@
         },
         {
             "name": "alibabacloud/sdk",
-            "version": "1.8.825",
+            "version": "1.8.873",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aliyun/openapi-sdk-php.git",
-                "reference": "ebc52e04ae8cdd3ef9cd10e4473fd8c76adc685b"
+                "reference": "f31d3c0ce88ecb4663f137ddeca9d27b9259fce2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aliyun/openapi-sdk-php/zipball/ebc52e04ae8cdd3ef9cd10e4473fd8c76adc685b",
-                "reference": "ebc52e04ae8cdd3ef9cd10e4473fd8c76adc685b",
+                "url": "https://api.github.com/repos/aliyun/openapi-sdk-php/zipball/f31d3c0ce88ecb4663f137ddeca9d27b9259fce2",
+                "reference": "f31d3c0ce88ecb4663f137ddeca9d27b9259fce2",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -398,7 +398,58 @@
                 "issues": "https://github.com/aliyun/openapi-sdk-php/issues",
                 "source": "https://github.com/aliyun/openapi-sdk-php"
             },
-            "time": "2021-01-29T03:36:27+00:00"
+            "time": "2021-02-20T15:29:49+00:00"
+        },
+        {
+            "name": "aliyuncs/oss-sdk-php",
+            "version": "v2.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aliyun/aliyun-oss-php-sdk.git",
+                "reference": "492866331b7bafaac09506cf42f351b7e9e63766"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aliyun/aliyun-oss-php-sdk/zipball/492866331b7bafaac09506cf42f351b7e9e63766",
+                "reference": "492866331b7bafaac09506cf42f351b7e9e63766",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OSS\\": "src/OSS"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aliyuncs",
+                    "homepage": "http://www.aliyun.com"
+                }
+            ],
+            "description": "Aliyun OSS SDK for PHP",
+            "homepage": "http://www.aliyun.com/product/oss/",
+            "support": {
+                "issues": "https://github.com/aliyun/aliyun-oss-php-sdk/issues",
+                "source": "https://github.com/aliyun/aliyun-oss-php-sdk/tree/v2.4.1"
+            },
+            "time": "2020-09-29T06:23:57+00:00"
         },
         {
             "name": "brick/math",
@@ -7996,6 +8047,64 @@
                 "source": "https://github.com/webmozart/assert/tree/master"
             },
             "time": "2020-07-08T17:02:28+00:00"
+        },
+        {
+            "name": "xxtime/flysystem-aliyun-oss",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/xxtime/flysystem-aliyun-oss.git",
+                "reference": "ae873b5919076157b9cfeaf39d2f56d2dbb39ee9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/xxtime/flysystem-aliyun-oss/zipball/ae873b5919076157b9cfeaf39d2f56d2dbb39ee9",
+                "reference": "ae873b5919076157b9cfeaf39d2f56d2dbb39ee9",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "aliyuncs/oss-sdk-php": "~2.3",
+                "league/flysystem": "^1.0.49",
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Xxtime\\Flysystem\\Aliyun\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joe",
+                    "email": "joe@xxtime.com",
+                    "homepage": "https://github.com/xxtime",
+                    "role": "Developer"
+                }
+            ],
+            "description": "AliYun OSS adapter for flysystem. aliyuncs/oss-sdk-php ~2.3",
+            "homepage": "https://github.com/xxtime/flysystem-aliyun-oss",
+            "keywords": [
+                "Flysystem",
+                "aliyun-oss",
+                "flysystem-aliyun-oss"
+            ],
+            "support": {
+                "email": "joe@xxtime.com",
+                "issues": "https://github.com/xxtime/flysystem-aliyun-oss/issues",
+                "source": "https://github.com/xxtime/flysystem-aliyun-oss/tree/1.5.0",
+                "wiki": "https://github.com/xxtime"
+            },
+            "time": "2019-11-12T07:57:34+00:00"
         }
     ],
     "packages-dev": [],
