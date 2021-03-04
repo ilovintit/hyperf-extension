@@ -31,10 +31,12 @@
     "hyperf/guzzle": "^2.1",
     "hyperf/translation": "^2.1",
     "hyperf/signal": "^2.1",
+    "hyperf/paginator": "^2.1",
     "alibabacloud/sdk": "^1.8",
     "doctrine/dbal": "^3.0",
     "intervention/image": "^2.5",
     "overtrue/wechat": "^5.4",
+    "overtrue/pinyin": "^4.0",
     "ramsey/uuid": "^4.0",
     "xxtime/flysystem-aliyun-oss": "^1.5"
   },
