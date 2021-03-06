@@ -5,14 +5,15 @@ declare(strict_types=1);
 namespace Iit\HyLib\Listener;
 
 use Iit\HyLib\Exceptions\CustomException;
-use Hyperf\Event\Annotation\Listener;
 use Hyperf\Validation\Contract\ValidatorFactoryInterface;
 use Hyperf\Validation\Event\ValidatorFactoryResolved;
+use Iit\HyLib\Manager\VerificationCodeManager;
 use Psr\Container\ContainerInterface;
 use Hyperf\Event\Contract\ListenerInterface;
 
 /**
- * @Listener
+ * Class ValidatorFactoryResolvedListener
+ * @package Iit\HyLib\Listener
  */
 class ValidatorFactoryResolvedListener implements ListenerInterface
 {

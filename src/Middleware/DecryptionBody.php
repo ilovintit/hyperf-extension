@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Iit\HyLib\Middleware;
 
 use Hyperf\Utils\Context;
-use Iit\HyLib\Utils\Encryption;
+use Iit\HyLib\Utils\EAD;
 use Iit\HyLib\Utils\Log;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,14 +30,14 @@ class DecryptionBody implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!config('tools.transmission_encryption')) {
+        if (!config('library.middleware.transmission_encryption')) {
             return $handler->handle($request);
         }
         $requestBody = $request->getParsedBody();
         if (empty($requestBody)) {
             return $handler->handle($request);
         }
-        $decodeBody = json_decode(Encryption::decode($requestBody['encryptionData']), true);
+        $decodeBody = json_decode(make(EAD::class)->decode($requestBody['encryptionData']), true);
         Log::info('decryption-body-info', ['decodeBody' => $decodeBody]);
         return $handler->handle(Context::set(ServerRequestInterface::class, $request->withParsedBody($decodeBody)));
     }

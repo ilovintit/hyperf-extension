@@ -51,24 +51,24 @@ abstract class CronTaskProcess extends AbstractProcess
      */
     public function handle(): void
     {
-        $this->logInfo('process-started');
+        $this->logDebug('process-started');
         $lockTime = $this->runInterval();
-        $this->logInfo('process-interval' . $lockTime);
+        $this->logDebug('process-interval' . $lockTime);
         if ($lockTime <= 0) {
-            $this->logInfo('process-interval-invalid,exit');
+            $this->logDebug('process-interval-invalid,exit');
             sleep(3600);
             exit;
         }
-        $this->logInfo('process-task-key:' . $this->taskKey());
+        $this->logDebug('process-task-key:' . $this->taskKey());
         $this->lock = RedisLock::create($this->taskKey(), $lockTime);
         do {
-            $this->logInfo('process-try-lock-key');
+            $this->logDebug('process-try-lock-key');
             if (!$this->lock->get()) {
-                $this->logInfo('process-lock-failed,sleep');
+                $this->logDebug('process-lock-failed,sleep');
                 sleep($this->sleepTime());
                 continue;
             }
-            $this->logInfo('process-lock-successful');
+            $this->logDebug('process-lock-successful');
             try {
                 $this->cronTask() === self::SIGNAL_DELAY
                 && sleep($this->sleepTime());

@@ -22,7 +22,7 @@ class LoggerConfig
                 'class' => StreamHandler::class,
                 'constructor' => [
                     'stream' => env('LOG_STREAM_PATH', 'php://stdout'),
-                    'level' => env('LOG_STREAM_LEVEL', Logger::INFO)
+                    'level' => env('LOG_STREAM_LEVEL', Logger::DEBUG)
                 ],
             ],
             'formatter' => [

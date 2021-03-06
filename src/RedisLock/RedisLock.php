@@ -88,7 +88,7 @@ class RedisLock extends AbstractLock
     public static function create($name, $seconds = 0, $owner = null): RedisLock
     {
         return make(static::class, [
-            'redis' => config('redis.lock.pool', 'default'),
+            'redis' => config('library.redis_lock.pool', 'default'),
             'name' => $name,
             'seconds' => $seconds,
             'owner' => $owner

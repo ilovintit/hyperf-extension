@@ -233,7 +233,7 @@ class ListQueryBuilder
     /**
      * @return array
      */
-    public function getSearchKeywords()
+    public function getSearchKeywords(): array
     {
         if (empty($this->searchKeywords)) {
             $this->searchKeywords = $this->getSearchKeywordsFromRequest();

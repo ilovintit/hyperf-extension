@@ -7,6 +7,10 @@ use Exception;
 use Iit\HyLib\Exceptions\CustomException;
 use Vtiful\Kernel\Excel;
 
+/**
+ * Class Export
+ * @package Iit\HyLib\Utils
+ */
 class Export
 {
     /**
@@ -82,14 +86,14 @@ class Export
             throw new CustomException('生成Excel文件失败');
         }
         try {
-            $prefix = 'export/';
-            $storage = File::oss();
+            $prefix = config('library.export.oss_prefix');
+            $storage = OssFile::make();
             if (!$storage->write($prefix . $this->filename, file_get_contents($saveName))) {
                 file_exists($saveName) && unlink($saveName);
                 throw new CustomException('上传Excel到OSS失败');
             }
             file_exists($saveName) && unlink($saveName);
-            return File::ossAdapter()->getObjectUrl($this->filename, $prefix, false);
+            return OssFile::adapter()->getObjectUrl($this->filename, $prefix, false);
         } catch (Exception $exception) {
             file_exists($saveName) && unlink($saveName);
             throw new CustomException($exception->getMessage());

@@ -1,48 +1,59 @@
 {
-  "name": "ilovintit/hyperf-library",
-  "type": "library",
-  "description": "hyperf extension",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "ilovintit",
-      "email": "ilovintit@gmail.com"
+    "name": "ilovintit/hyperf-library",
+    "type": "library",
+    "description": "hyperf extension",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ilovintit",
+            "email": "ilovintit@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-swoole": ">=4.5",
+        "ext-json": "*",
+        "ext-redis": "*",
+        "ext-openssl": "*",
+        "ext-xlswriter": "*",
+        "hyperf/cache": "~2.1.0",
+        "hyperf/command": "~2.1.0",
+        "hyperf/config": "~2.1.0",
+        "hyperf/db-connection": "~2.1.0",
+        "hyperf/framework": "~2.1.0",
+        "hyperf/http-server": "~2.1.0",
+        "hyperf/logger": "~2.1.0",
+        "hyperf/memory": "~2.1.0",
+        "hyperf/process": "~2.1.0",
+        "hyperf/redis": "~2.1.0",
+        "hyperf/validation": "^2.1",
+        "hyperf/filesystem": "^2.1",
+        "hyperf/guzzle": "^2.1",
+        "hyperf/translation": "^2.1",
+        "hyperf/signal": "^2.1",
+        "hyperf/paginator": "^2.1",
+        "alibabacloud/sdk": "^1.8",
+        "doctrine/dbal": "^3.0",
+        "intervention/image": "^2.5",
+        "overtrue/wechat": "^5.4",
+        "overtrue/pinyin": "^4.0",
+        "ramsey/uuid": "^4.0",
+        "xxtime/flysystem-aliyun-oss": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Iit\\HyLib\\": "/src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.1-dev"
+        },
+        "hyperf": {
+            "config": "Iit\\HyLib\\ConfigProvider"
+        }
     }
-  ],
-  "require": {
-    "php": ">=7.2",
-    "ext-swoole": ">=4.5",
-    "ext-json": "*",
-    "ext-redis": "*",
-    "ext-openssl": "*",
-    "ext-xlswriter": "*",
-    "hyperf/cache": "~2.1.0",
-    "hyperf/command": "~2.1.0",
-    "hyperf/config": "~2.1.0",
-    "hyperf/db-connection": "~2.1.0",
-    "hyperf/framework": "~2.1.0",
-    "hyperf/http-server": "~2.1.0",
-    "hyperf/logger": "~2.1.0",
-    "hyperf/memory": "~2.1.0",
-    "hyperf/process": "~2.1.0",
-    "hyperf/redis": "~2.1.0",
-    "hyperf/validation": "^2.1",
-    "hyperf/filesystem": "^2.1",
-    "hyperf/guzzle": "^2.1",
-    "hyperf/translation": "^2.1",
-    "hyperf/signal": "^2.1",
-    "hyperf/paginator": "^2.1",
-    "alibabacloud/sdk": "^1.8",
-    "doctrine/dbal": "^3.0",
-    "intervention/image": "^2.5",
-    "overtrue/wechat": "^5.4",
-    "overtrue/pinyin": "^4.0",
-    "ramsey/uuid": "^4.0",
-    "xxtime/flysystem-aliyun-oss": "^1.5"
-  },
-  "autoload": {
-    "psr-4": {
-      "Iit\\HyLib\\": "/src"
-    }
-  }
 }
