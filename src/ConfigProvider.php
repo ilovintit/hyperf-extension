@@ -6,7 +6,7 @@ use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
 use Iit\HyLib\Exceptions\Handler\AppExceptionHandler;
 use Iit\HyLib\Filesystem\OssAdapterFactory;
-use Iit\HyLib\Framework\DbQueryListener;
+use Iit\HyLib\Listener\DbQueryListener;
 use Iit\HyLib\Listener\ValidatorFactoryResolvedListener;
 use Iit\HyLib\Logger\FrameworkLoggerFactory;
 use Iit\HyLib\Middleware\CoreMiddleware;

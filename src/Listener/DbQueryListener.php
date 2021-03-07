@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Iit\HyLib\Framework;
+namespace Iit\HyLib\Listener;
 
 use Hyperf\Database\Events\QueryExecuted;
 use Hyperf\Utils\Arr;
@@ -12,7 +12,7 @@ use Iit\HyLib\Utils\Log;
 
 /**
  * Class DbQueryListener
- * @package App\Listener\Framework
+ * @package App\Listener\Listener
  */
 class DbQueryListener implements ListenerInterface
 {
