@@ -4,9 +4,9 @@ return [
         'default' => 'basic',
         'secrets' => [
             'basic' => [
-                'cipher' => config('AES_CIPHER', 'AES-128-CBC'),
-                'key' => config('AES_KEY'),
-                'iv' => config('AES_IV'),
+                'cipher' => env('AES_CIPHER', 'AES-128-CBC'),
+                'key' => env('AES_KEY'),
+                'iv' => env('AES_IV'),
             ]
         ]
     ],
@@ -17,6 +17,6 @@ return [
         'pool' => 'default',
     ],
     'middleware' => [
-        'transmission_encryption' => config('TRAN_ENCRYPT', false)
+        'transmission_encryption' => env('TRAN_ENCRYPT', false)
     ]
 ];
