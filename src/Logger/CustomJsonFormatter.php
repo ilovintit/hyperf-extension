@@ -38,16 +38,15 @@ class CustomJsonFormatter implements FormatterInterface
 
     protected function convertToJson(array $record)
     {
-        if ($exception = isset($record['context']['exception']) ? $record['context']['exception'] : null) {
-            unset($record['context']['exception']);
-        }
         $seq = Context::getOrSet(self::SEQUENCE_CONTEXT_KEY, 0);
         $baseFormat = [
             'id' => Log::id(),
             'lts' => strtolower($record['level_name']) . '/' . $record['datetime']->format('Y-m-d H:i:s.u') . '/' . $seq,
             'msg' => $record['message'],
         ];
+        $exception = isset($record['context']['exception']) ? $record['context']['exception'] : null;
         if ($exception instanceof Throwable) {
+            unset($record['context']['exception']);
             $baseFormat['nex'] = $exception->__toString();
         }
         $cxt = $this->getContext($record);
