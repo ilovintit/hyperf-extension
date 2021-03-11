@@ -100,7 +100,9 @@ trait ModelCodeGenerate
      */
     protected function generateCodeLength(): int
     {
-        $maxLength = $this->generateCodeMaxLength() === null ? config('tools.model_code_length') : $this->generateCodeMaxLength();
+        $maxLength = $this->generateCodeMaxLength() === null ?
+            config('library.model.default_code_length', 10) :
+            $this->generateCodeMaxLength();
         $length = $maxLength - strlen($this->generateCodePrefix());
         if ($length <= 0) {
             throw new CustomException('Model Length Is Too Short.');
