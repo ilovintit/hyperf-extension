@@ -108,19 +108,28 @@ class CodeGenerator
         $max = str_pad($max, $len, '0', STR_PAD_LEFT);
         $first = substr($max, 0, 1);
         if (!$firstPosition = self::getPosition($first, $map)) {
-            throw new GenerateCodeException('当前编码首字符不存在于字符集内');
+            throw new GenerateCodeException('当前编码首字符不存在于字符集内', [
+                'first' => $first, 'map' => $map, 'firstPosition' => $firstPosition
+            ]);
         }
         if (!$firstMinPosition = self::getPosition($firstMin, $map)) {
-            throw new GenerateCodeException('当前编码首字符最小字符不存在于字符集内');
+            throw new GenerateCodeException('当前编码首字符最小字符不存在于字符集内', [
+                'firstMin' => $firstMin, 'map' => $map, 'firstMinPosition' => $firstMinPosition
+            ]);
         }
         if (!$firstMaxPosition = self::getPosition($firstMax, $map)) {
-            throw new GenerateCodeException('当前编码首字符最大字符不存在于字符集内');
+            throw new GenerateCodeException('当前编码首字符最大字符不存在于字符集内', [
+                'firstMax' => $firstMax, 'map' => $map, 'firstMaxPosition' => $firstMaxPosition
+            ]);
         }
         if ($firstPosition < $firstMinPosition) {
             $max = $firstMin . substr($max, 1, $len - 1);
         }
         if ($firstPosition > $firstMaxPosition) {
-            throw new GenerateCodeException('需要生成的编码首字符超出定义字符集的最大字符,请更改字符集或增加编码长度');
+            throw new GenerateCodeException('需要生成的编码首字符超出定义字符集的最大字符,请更改字符集或增加编码长度', [
+                'firstPosition' => $firstPosition,
+                'firstMaxPosition' => $firstMaxPosition,
+            ]);
         }
         $final = [];
         for ($i = 1; $i <= $len; $i++) {
