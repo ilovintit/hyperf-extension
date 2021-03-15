@@ -2,10 +2,14 @@
 
 namespace Iit\HyLib\Auth;
 
+use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
+use Iit\HyLib\Utils\Log;
 use Iit\HyLib\Utils\Res;
+use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
+use Throwable;
 
 class AccessToken
 {
@@ -34,6 +38,11 @@ class AccessToken
     protected $autoRefresh;
 
     /**
+     * @var CacheInterface
+     */
+    protected $cache;
+
+    /**
      * ApiToken constructor.
      * @param $config
      */
@@ -46,6 +55,7 @@ class AccessToken
         if (!isset($config['cache_prefix']) || empty($config['cache_prefix'])) {
             throw new \RuntimeException('config key "cachePrefix" can\'t empty.');
         }
+        $this->cache = ApplicationContext::getContainer()->get(CacheInterface::class);
         $this->headerKey = $config['token_header_key'];
         $this->cachePrefix = $config['cache_prefix'];
         $this->expired = isset($config['token_expired']) ? $config['token_expired'] : 120;
@@ -55,7 +65,6 @@ class AccessToken
     /**
      * @return array|string
      */
-
     public function getToken()
     {
         return Context::override('xAccessToken', function ($token) {
@@ -66,11 +75,10 @@ class AccessToken
     /**
      * @return null|string
      */
-
-    protected function getCode()
+    protected function getCode(): ?string
     {
         try {
-            return cache()->get($this->cachePrefix . $this->getToken());
+            return $this->cache->get($this->cachePrefix . $this->getToken());
         } catch (InvalidArgumentException $e) {
             return null;
         }
@@ -79,8 +87,7 @@ class AccessToken
     /**
      * @return null|string
      */
-
-    public function getUserCode()
+    public function getUserCode(): ?string
     {
         $userCode = $this->getCode();
         $this->autoRefresh === true && !empty($userCode) && $this->cacheUserCode($userCode);
@@ -88,13 +95,12 @@ class AccessToken
     }
 
     /**
-     *
+     * @return bool
      */
-
-    public function clearToken()
+    public function clearToken(): bool
     {
         try {
-            return cache()->delete($this->cachePrefix . $this->getToken());
+            return $this->cache->delete($this->cachePrefix . $this->getToken());
         } catch (InvalidArgumentException $e) {
             return false;
         }
@@ -103,8 +109,7 @@ class AccessToken
     /**
      * 生成随机token
      */
-
-    protected function generateToken()
+    protected function generateToken(): AccessToken
     {
         Context::set('xAccessToken', Str::random(40));
         return $this;
@@ -114,13 +119,12 @@ class AccessToken
      * @param $userCode
      * @return bool
      */
-
-    public function setUserCode($userCode)
+    public function setUserCode($userCode): bool
     {
         try {
             return $this->generateToken()->cacheUserCode($userCode);
-        } catch (\Exception $exception) {
-            logs()->error($exception);
+        } catch (Throwable $exception) {
+            Log::error($exception, ['exception' => $exception->__toString()]);
             return false;
         }
     }
@@ -129,11 +133,10 @@ class AccessToken
      * @param $userCode
      * @return bool
      */
-
-    protected function cacheUserCode($userCode)
+    protected function cacheUserCode($userCode): bool
     {
         try {
-            return cache()->set($this->cachePrefix . $this->getToken(), $userCode, $this->expired * 60);
+            return $this->cache->set($this->cachePrefix . $this->getToken(), $userCode, $this->expired * 60);
         } catch (InvalidArgumentException $e) {
             return false;
         }

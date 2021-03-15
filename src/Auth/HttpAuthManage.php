@@ -43,13 +43,22 @@ class HttpAuthManage implements HttpAuthContract
     /**
      * @var ConfigInterface
      */
-    protected $config;
+    protected ConfigInterface $config;
 
+    /**
+     * HttpAuthManage constructor.
+     * @param ConfigInterface $config
+     */
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
     }
 
+    /**
+     * @param $method
+     * @param $parameters
+     * @return mixed
+     */
     public function __call($method, $parameters)
     {
         return $this->guard()->{$method}(...$parameters);
@@ -87,7 +96,7 @@ class HttpAuthManage implements HttpAuthContract
      *
      * @return Closure
      */
-    public function userResolver()
+    public function userResolver(): Closure
     {
         return $this->getContext('userResolver');
     }
@@ -98,7 +107,7 @@ class HttpAuthManage implements HttpAuthContract
      * @param Closure $userResolver
      * @return $this
      */
-    public function resolveUsersUsing(Closure $userResolver)
+    public function resolveUsersUsing(Closure $userResolver): HttpAuthManage
     {
         $this->setContext('userResolver', $userResolver);
 
@@ -127,8 +136,8 @@ class HttpAuthManage implements HttpAuthContract
      * Create the user provider implementation for the driver.
      *
      * @param null|string $provider
-     * @throws \InvalidArgumentException
      * @return null|UserProvider
+     * @throws \InvalidArgumentException
      */
     public function createUserProvider($provider = null)
     {
@@ -152,7 +161,7 @@ class HttpAuthManage implements HttpAuthContract
      *
      * @return string
      */
-    public function getDefaultUserProvider()
+    public function getDefaultUserProvider(): string
     {
         return $this->config->get('http-auth.defaults.provider');
     }
@@ -184,7 +193,7 @@ class HttpAuthManage implements HttpAuthContract
      * @param null|string $provider
      * @return null|array
      */
-    protected function getProviderConfiguration($provider)
+    protected function getProviderConfiguration(?string $provider): ?array
     {
         if ($provider = $provider ?: $this->getDefaultUserProvider()) {
             return $this->config->get('http-auth.providers.' . $provider);
