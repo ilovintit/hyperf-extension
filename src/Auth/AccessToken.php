@@ -6,7 +6,7 @@ use Hyperf\Utils\ApplicationContext;
 use Hyperf\Utils\Context;
 use Hyperf\Utils\Str;
 use Iit\HyLib\Utils\Log;
-use Iit\HyLib\Utils\Res;
+use Iit\HyLib\Utils\Req;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 use Throwable;
@@ -67,8 +67,8 @@ class AccessToken
      */
     public function getToken()
     {
-        return Context::override('xAccessToken', function ($token) {
-            return empty($token) ? Res::now()->getHeaderLine($this->headerKey) : $token;
+        return Context::getOrSet('xAccessToken', function () {
+            return Req::now()->getHeaderLine($this->headerKey);
         });
     }
 
