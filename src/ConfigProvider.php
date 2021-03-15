@@ -4,6 +4,8 @@ namespace Iit\HyLib;
 
 use Hyperf\Contract\StdoutLoggerInterface;
 use Hyperf\HttpMessage\Server\Request\JsonParser;
+use Iit\HyLib\Auth\Contract\HttpAuthContract;
+use Iit\HyLib\Auth\HttpAuthManage;
 use Iit\HyLib\Exceptions\Handler\AppExceptionHandler;
 use Iit\HyLib\Filesystem\OssAdapterFactory;
 use Iit\HyLib\Listener\DbQueryListener;
@@ -26,6 +28,7 @@ class ConfigProvider
                 JsonParser::class => RequestJsonParser::class,
                 HyCoreMiddleware::class => CoreMiddleware::class,
                 StdoutLoggerInterface::class => FrameworkLoggerFactory::class,
+                HttpAuthContract::class => HttpAuthManage::class,
             ],
             'exceptions' => [
                 'handler' => [
