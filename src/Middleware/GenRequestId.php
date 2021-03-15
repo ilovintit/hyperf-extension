@@ -42,7 +42,8 @@ class GenRequestId implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$request->hasHeader('X-Request-Id')) {
-            $request = Context::set(ServerRequestInterface::class, $request->withHeader('X-Request-Id', H::uuid()));
+            $reqId = !$request->hasHeader('X-Ca-Request-Id') ? H::uuid() : $request->getHeaderLine('X-Ca-Request-Id');
+            $request = Context::set(ServerRequestInterface::class, $request->withHeader('X-Request-Id', $reqId));
         }
         Log::info('receive-request-info', [
             'method' => $request->getMethod(),

@@ -60,7 +60,6 @@ class ConfigProvider
                     ]
                 ]
             ],
-            'library' => require __DIR__ . '/../publish/library.php',
             'publish' => [
                 [
                     'id' => 'config',
