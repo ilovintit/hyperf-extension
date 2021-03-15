@@ -85,4 +85,23 @@ class Arr extends \Hyperf\Utils\Arr
         }
         return $return;
     }
+
+    /**
+     * @param array $array
+     * @return array
+     */
+    public static function studlyCaseArrayKeys(array $array): array
+    {
+        $return = [];
+        foreach ($array as $key => $item) {
+            if (is_array($item)) {
+                $return[Str::studlyCase($key)] = Arr::studlyCaseArrayKeys($item);
+            } else if ($item instanceof Collection) {
+                $return[Str::studlyCase($key)] = Arr::studlyCaseArrayKeys($item->toArray());
+            } else {
+                $return[Str::studlyCase($key)] = $item;
+            }
+        }
+        return $return;
+    }
 }

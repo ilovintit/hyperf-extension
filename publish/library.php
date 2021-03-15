@@ -10,7 +10,7 @@ return [
             ]
         ]
     ],
-    'model'=>[
+    'model' => [
         'default_code_length' => env('MODEL_DEFAULT_CODE_LENGTH', 10)
     ],
     'export' => [
@@ -20,6 +20,7 @@ return [
         'pool' => 'default',
     ],
     'middleware' => [
+        'api_signature_key' => env('API_SIGN_KEY'),
         'transmission_encryption' => env('TRAN_ENCRYPT', false)
     ],
     'services' => [

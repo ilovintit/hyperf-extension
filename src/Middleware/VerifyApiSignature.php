@@ -138,7 +138,7 @@ class VerifyApiSignature implements MiddlewareInterface
             . $request->getHeaderLine('X-Ca-Timestamp') . "\n"
             . $signHeaderString . "\n"
             . $request->getUri()->getPath() . (empty($request->getQueryParams()) ? '' : '?' . $signQueryString);
-        $signSecret = config('tools.api_signature_secret');
+        $signSecret = config('library.middleware.api_signature_key');
         /*
          * 计算签名并对比请求的签名是否一致
          */

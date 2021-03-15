@@ -26,4 +26,13 @@ class Str extends \Hyperf\Utils\Str
     {
         return is_numeric($string) ? $string : parent::snake($string);
     }
+
+    /**
+     * @param $string
+     * @return int|string
+     */
+    public static function studlyCase($string)
+    {
+        return is_numeric($string) ? $string : parent::studly($string);
+    }
 }

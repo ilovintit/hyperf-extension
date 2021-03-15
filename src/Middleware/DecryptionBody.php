@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Iit\HyLib\Middleware;
 
+use Hyperf\Utils\Codec\Json;
 use Hyperf\Utils\Context;
 use Iit\HyLib\Utils\EAD;
 use Iit\HyLib\Utils\Log;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -17,6 +19,20 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class DecryptionBody implements MiddlewareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected ContainerInterface $container;
+
+    /**
+     * GenRequestId constructor.
+     * @param ContainerInterface $container
+     */
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * Process an incoming server request.
@@ -37,8 +53,8 @@ class DecryptionBody implements MiddlewareInterface
         if (empty($requestBody)) {
             return $handler->handle($request);
         }
-        $decodeBody = json_decode(make(EAD::class)->decode($requestBody['encryptionData']), true);
-        Log::info('decryption-body-info', ['decodeBody' => $decodeBody]);
+        $decodeBody = Json::decode($this->container->get(EAD::class)->decode($requestBody['encryptionData']));
+        Log::debug('decryption-body-info', ['decodeBody' => $decodeBody]);
         return $handler->handle(Context::set(ServerRequestInterface::class, $request->withParsedBody($decodeBody)));
     }
 }

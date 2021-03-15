@@ -57,11 +57,7 @@ class ConfigProvider
                     ]
                 ]
             ],
-            'library' => [
-                'model' => [
-                    'default_code_length' => env('MODEL_DEFAULT_CODE_LENGTH', 10)
-                ]
-            ],
+            'library' => require __DIR__ . '/../publish/library.php',
             'publish' => [
                 [
                     'id' => 'config',
