@@ -59,7 +59,7 @@ class FormatConvertBody implements MiddlewareInterface
             $resContent = $response->getBody()->getContents();
             if (!empty($resContent) && !empty(json_decode($resContent, true))) {
                 $method = $this->outputConvertFormat;
-                Context::set(ResponseInterface::class, $response
+                $response = Context::set(ResponseInterface::class, $response
                     ->withBody(new SwooleStream(Json::encode(Arr::$method(Json::decode($resContent, true))))));
             }
         }
