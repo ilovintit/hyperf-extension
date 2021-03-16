@@ -273,8 +273,8 @@ class ListQueryBuilder
      */
     public function withPage($defaultPerPage = 10, $defaultPage = 1): ListQueryBuilder
     {
-        $this->perPage = !empty($this->request->getHeaderLine($this->perPageKey)) ? $this->request->getHeaderLine($this->perPageKey) : $defaultPerPage;
-        $this->page = !empty($this->request->getHeaderLine($this->pageKey)) ? $this->request->getHeaderLine($this->pageKey) : $defaultPage;
+        $this->perPage = !empty($this->request->getHeaderLine($this->perPageKey)) ? intval($this->request->getHeaderLine($this->perPageKey)) : $defaultPerPage;
+        $this->page = !empty($this->request->getHeaderLine($this->pageKey)) ? intval($this->request->getHeaderLine($this->pageKey)) : $defaultPage;
         $this->withPage = true;
         return $this;
     }
