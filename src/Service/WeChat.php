@@ -35,8 +35,8 @@ class WeChat
     public function __construct(CacheInterface $cache, LoggerFactory $logger, $type = self::TYPE_OFFICIAL_ACCOUNT, $name = 'default')
     {
         $configList = config('library.services.wechat');
-        $configs = isset($configList[Str::studlyCase($type)]) ? $configList[Str::studlyCase($type)] : [];
-        $config = isset($configs[$type]) ? $configs[$type] : [];
+        $configs = isset($configList[Str::snakeCase($type)]) ? $configList[Str::snakeCase($type)] : [];
+        $config = isset($configs[$name]) ? $configs[$name] : [];
         $this->app = Factory::$type($config);
         $this->app['cache'] = $cache;
         $this->app['logger'] = $logger->get('we-chat');
