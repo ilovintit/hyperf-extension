@@ -2,6 +2,7 @@
 
 namespace Iit\HyLib\Logger;
 
+use Iit\HyLib\Exceptions\CustomException;
 use Iit\HyLib\Utils\Log;
 use Exception;
 use Hyperf\Utils\Context;
@@ -45,10 +46,14 @@ class CustomJsonFormatter implements FormatterInterface
             'msg' => $record['message'],
         ];
         $exception = isset($record['context']['exception']) ? $record['context']['exception'] : null;
+        if ($exception instanceof CustomException) {
+            $baseFormat['nce'] = ['data' => $exception->getData(), 'debug' => $exception->getDebug()]
+        }
         if ($exception instanceof Throwable) {
             unset($record['context']['exception']);
             $baseFormat['nex'] = $exception->__toString();
         }
+
         $cxt = $this->getContext($record);
         if (!empty($cxt)) {
             $baseFormat['ncx'] = $cxt;

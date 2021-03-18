@@ -76,7 +76,9 @@ trait ModelCodeGenerate
     protected function maxCode(): string
     {
         if ($maxModel = self::query()->withoutGlobalScope(SoftDeletingScope::class)
-            ->orderByDesc($this->generateCodeKey())->first()
+            ->where($this->generateCodeKey(), 'like', $this->generateCodePrefix() . '%')
+            ->orderByDesc($this->generateCodeKey())
+            ->first()
         ) {
             return substr($maxModel[$this->generateCodeKey()], strlen($this->generateCodePrefix()));
         }
