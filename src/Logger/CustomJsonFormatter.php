@@ -47,7 +47,7 @@ class CustomJsonFormatter implements FormatterInterface
         ];
         $exception = isset($record['context']['exception']) ? $record['context']['exception'] : null;
         if ($exception instanceof CustomException) {
-            $baseFormat['nce'] = ['data' => $exception->getData(), 'debug' => $exception->getDebug()]
+            $baseFormat['nce'] = ['data' => $exception->getData(), 'debug' => $exception->getDebug()];
         }
         if ($exception instanceof Throwable) {
             unset($record['context']['exception']);
