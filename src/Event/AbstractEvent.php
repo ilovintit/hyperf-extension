@@ -25,7 +25,7 @@ abstract class AbstractEvent
     /**
      * @var string|null
      */
-    public ?string $returnMessage;
+    public ?string $returnMessage = null;
 
     /**
      * @var array
@@ -33,9 +33,9 @@ abstract class AbstractEvent
     public array $returnHeaders = [];
 
     /**
-     * @var int
+     * @var null|int
      */
-    public int $returnStatusCode;
+    public ?int $returnStatusCode = null;
 
     /**
      * @var int
