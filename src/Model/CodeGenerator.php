@@ -284,13 +284,12 @@ class CodeGenerator
     {
         $cacheKey = self::cacheTags($uniqueKey);
         $nowMaxCode = 0;
-        if (self::redis()->exists($cacheKey)) {
-            $nowMaxCode = intval(self::redis()->get($cacheKey));
-            self::redis()->incr($cacheKey);
-        }
         if (!self::redis()->exists($cacheKey)) {
             $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
             self::redis()->set($cacheKey, strval($nowMaxCode));
+        }
+        if (self::redis()->exists($cacheKey)) {
+            $nowMaxCode = self::redis()->incr($cacheKey);
         }
         return self::getNext(self::convertIntegerToCode($nowMaxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
