@@ -285,8 +285,7 @@ class CodeGenerator
         $cacheKey = self::cacheTags($uniqueKey);
         $nowMaxCode = 0;
         if (self::redis()->exists($cacheKey)) {
-            $nowMaxCode = intval(self::redis()->get($cacheKey));
-            self::redis()->incr($cacheKey);
+            $nowMaxCode = self::redis()->incr($cacheKey);
         }
         if (!self::redis()->exists($cacheKey)) {
             $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
