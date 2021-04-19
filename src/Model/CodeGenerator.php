@@ -24,12 +24,50 @@ class CodeGenerator
     /**
      * @var string[]
      */
-    protected static array $numberMap = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    protected static array $numberMap = [
+        '0',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9'
+    ];
 
     /**
      * @var string[]
      */
-    protected static array $letterMap = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    protected static array $letterMap = [
+        'A',
+        'B',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'J',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'X',
+        'Y',
+        'Z'
+    ];
 
     /**
      * @param $key
@@ -110,19 +148,25 @@ class CodeGenerator
         $firstPosition = self::getPosition($first, $map);
         if ($firstPosition === false) {
             throw new GenerateCodeException('当前编码首字符不存在于字符集内', [
-                'first' => $first, 'map' => $map, 'firstPosition' => $firstPosition
+                'first' => $first,
+                'map' => $map,
+                'firstPosition' => $firstPosition
             ]);
         }
         $firstMinPosition = self::getPosition($firstMin, $map);
         if ($firstMinPosition === false) {
             throw new GenerateCodeException('当前编码首字符最小字符不存在于字符集内', [
-                'firstMin' => $firstMin, 'map' => $map, 'firstMinPosition' => $firstMinPosition
+                'firstMin' => $firstMin,
+                'map' => $map,
+                'firstMinPosition' => $firstMinPosition
             ]);
         }
         $firstMaxPosition = self::getPosition($firstMax, $map);
         if ($firstMaxPosition === false) {
             throw new GenerateCodeException('当前编码首字符最大字符不存在于字符集内', [
-                'firstMax' => $firstMax, 'map' => $map, 'firstMaxPosition' => $firstMaxPosition
+                'firstMax' => $firstMax,
+                'map' => $map,
+                'firstMaxPosition' => $firstMaxPosition
             ]);
         }
         if ($firstPosition < $firstMinPosition) {
@@ -240,9 +284,12 @@ class CodeGenerator
     {
         $cacheKey = self::cacheTags($uniqueKey);
         if (self::redis()->exists($cacheKey)) {
+            self::redis()->incr($cacheKey);
+        }
+        if (!self::redis()->exists($cacheKey)) {
             self::redis()->set($cacheKey, strval(self::convertCodeToInteger(value($maxCode), $type)));
         }
-        return self::getNext(self::convertIntegerToCode(self::redis()->incr($cacheKey), $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
+        return self::getNext(self::convertIntegerToCode(self::redis()->get($cacheKey), $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
 
 }
