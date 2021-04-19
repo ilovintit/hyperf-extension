@@ -283,13 +283,16 @@ class CodeGenerator
     public static function getUniqueCode($uniqueKey, $maxCode, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null): ?string
     {
         $cacheKey = self::cacheTags($uniqueKey);
+        $nowMaxCode = 0;
         if (self::redis()->exists($cacheKey)) {
+            $nowMaxCode = intval(self::redis()->get($cacheKey));
             self::redis()->incr($cacheKey);
         }
         if (!self::redis()->exists($cacheKey)) {
-            self::redis()->set($cacheKey, strval(self::convertCodeToInteger(value($maxCode), $type)));
+            $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
+            self::redis()->set($cacheKey, strval($nowMaxCode));
         }
-        return self::getNext(self::convertIntegerToCode(self::redis()->get($cacheKey), $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
+        return self::getNext(self::convertIntegerToCode($nowMaxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
 
 }
