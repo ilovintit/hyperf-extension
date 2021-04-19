@@ -26,7 +26,7 @@ class VerificationCodeManager
     /**
      * @var null|string
      */
-    protected ?string $recipient = null;
+    protected $recipient;
 
     /**
      * @var null|integer
