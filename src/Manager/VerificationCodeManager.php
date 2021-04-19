@@ -19,19 +19,19 @@ class VerificationCodeManager
     private string $cachePrefix = 'verification_code:';
 
     /**
-     * @var string
+     * @var null|string
      */
-    protected string $codeId;
+    protected ?string $codeId = null;
 
     /**
-     * @var string
+     * @var null|string
      */
-    protected string $recipient;
+    protected ?string $recipient = null;
 
     /**
-     * @var integer
+     * @var null|integer
      */
-    protected int $code;
+    protected ?int $code = null;
 
     /**
      * @var CacheInterface
@@ -74,7 +74,10 @@ class VerificationCodeManager
         if ($codeId !== $this->codeId) {
             $this->codeId = $codeId;
             $cacheInfo = $this->cache->get($this->getCacheKey($codeId));
-            list($this->recipient, $this->code) = empty($cacheInfo) ? [null, null] : json_decode($cacheInfo, true);
+            list($this->recipient, $this->code) = empty($cacheInfo) ? [
+                null,
+                null
+            ] : json_decode($cacheInfo, true);
         }
         return $this;
     }
@@ -106,7 +109,10 @@ class VerificationCodeManager
     {
         $expiredTime = $expiredTime === null ? config('tools.verification_code_expired_time', 180) : $expiredTime;
         $codeId = H::uuid();
-        $this->cache->set($this->getCacheKey($codeId), json_encode([$recipient, $code]), $expiredTime);
+        $this->cache->set($this->getCacheKey($codeId), json_encode([
+            $recipient,
+            $code
+        ]), $expiredTime);
         return $codeId;
     }
 
@@ -120,7 +126,10 @@ class VerificationCodeManager
     {
         $code = $this->generateCode();
         $smsId = $this->saveCode($recipient, $code, $expiredTime);
-        return [$smsId, $code];
+        return [
+            $smsId,
+            $code
+        ];
     }
 
     /**
