@@ -206,7 +206,9 @@ class CodeGenerator
      */
     protected static function redis()
     {
-        return ApplicationContext::getContainer()->get(RedisFactory::class)->get('default');
+        return ApplicationContext::getContainer()
+            ->get(RedisFactory::class)
+            ->get('default');
     }
 
     /**
@@ -284,13 +286,18 @@ class CodeGenerator
     {
         $cacheKey = self::cacheTags($uniqueKey);
         $nowMaxCode = 0;
-        if (self::redis()->exists($cacheKey)) {
-            $nowMaxCode = intval(self::redis()->get($cacheKey));
-            self::redis()->incr($cacheKey);
+        if (self::redis()
+            ->exists($cacheKey)) {
+            $nowMaxCode = intval(self::redis()
+                ->get($cacheKey));
+            self::redis()
+                ->incr($cacheKey);
         }
-        if (!self::redis()->exists($cacheKey)) {
+        if (!self::redis()
+            ->exists($cacheKey)) {
             $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
-            self::redis()->set($cacheKey, strval($nowMaxCode));
+            self::redis()
+                ->set($cacheKey, strval($nowMaxCode));
         }
         return self::getNext(self::convertIntegerToCode($nowMaxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
