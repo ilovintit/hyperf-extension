@@ -13,16 +13,18 @@ use Monolog\Logger;
 class LoggerConfig
 {
     /**
+     * @param int $defaultStreamLevel
+     * @param string $defaultStreamPath
      * @return array
      */
-    public static function stream(): array
+    public static function stream(int $defaultStreamLevel = Logger::DEBUG, string $defaultStreamPath = 'php://stdout'): array
     {
         return [
             'handler' => [
                 'class' => StreamHandler::class,
                 'constructor' => [
-                    'stream' => env('LOG_STREAM_PATH', 'php://stdout'),
-                    'level' => env('LOG_STREAM_LEVEL', Logger::DEBUG)
+                    'stream' => env('LOG_STREAM_PATH', $defaultStreamPath),
+                    'level' => env('LOG_STREAM_LEVEL', $defaultStreamLevel)
                 ],
             ],
             'formatter' => [
