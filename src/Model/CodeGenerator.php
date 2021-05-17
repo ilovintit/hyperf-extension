@@ -222,7 +222,7 @@ class CodeGenerator
             self::TYPE_ONLY_LETTER => 26,
             self::TYPE_NUMBER_AND_LETTER => 36,
         ];
-        return isset($map[$type]) ? $map[$type] : null;
+        return $map[$type] ?? null;
     }
 
     /**
@@ -285,19 +285,12 @@ class CodeGenerator
     public static function getUniqueCode($uniqueKey, $maxCode, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null): ?string
     {
         $cacheKey = self::cacheTags($uniqueKey);
-        $nowMaxCode = 0;
-        if (self::redis()
-            ->exists($cacheKey)) {
-            $nowMaxCode = intval(self::redis()
-                ->get($cacheKey));
-            self::redis()
-                ->incr($cacheKey);
-        }
-        if (!self::redis()
-            ->exists($cacheKey)) {
+        if (self::redis()->exists($cacheKey)) {
+            $nowMaxCode = intval(self::redis()->get($cacheKey));
+            self::redis()->incr($cacheKey);
+        } else {
             $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
-            self::redis()
-                ->set($cacheKey, strval($nowMaxCode));
+            self::redis()->set($cacheKey, strval($nowMaxCode));
         }
         return self::getNext(self::convertIntegerToCode($nowMaxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
