@@ -12,6 +12,11 @@ use Iit\HyLib\Utils\Arr;
 trait EventValidatorTrait
 {
     /**
+     * @var bool
+     */
+    public bool $isConvertRealType = true;
+
+    /**
      * @var ValidatorInterface
      */
     public ValidatorInterface $validator;
@@ -28,7 +33,7 @@ trait EventValidatorTrait
 
     public function validateInput(array $input)
     {
-        $this->input = Arr::toRealType($input);
+        $this->input = $this->isConvertRealType ? Arr::toRealType($input) : $input;
         $this->validator = ApplicationContext::getContainer()
             ->get(ValidatorFactoryInterface::class)
             ->make($this->input, $this->rules(), $this->messages());
