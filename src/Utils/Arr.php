@@ -39,7 +39,7 @@ class Arr extends \Hyperf\Utils\Arr
                 return self::toRealType($arrayValue);
             }
             if (is_numeric($arrayValue)) {
-                return is_integer($arrayValue) || is_float($arrayValue) ? floatval($arrayValue) : $arrayValue;
+                return is_integer($arrayValue) ? intval($arrayValue) : (is_float($arrayValue) ? floatval($arrayValue) : strval($arrayValue));
             }
             if (is_string($arrayValue) && empty($arrayValue)) {
                 return null;
