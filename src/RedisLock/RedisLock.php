@@ -42,10 +42,29 @@ class RedisLock extends AbstractLock
     public function acquire(): bool
     {
         if ($this->seconds > 0) {
-            return $this->redis->set($this->name, $this->owner, ['NX', 'EX' => $this->seconds]) == true;
+            return $this->redis->set($this->name, $this->owner, [
+                    'NX',
+                    'EX' => $this->seconds
+                ]) == true;
         } else {
             return $this->redis->setnx($this->name, $this->owner) === 1;
         }
+    }
+
+    /**
+     * renew lock ttl
+     *
+     * @return bool
+     */
+    public function renew(): bool
+    {
+        if ($this->seconds > 0 && $this->isOwnedByCurrentProcess()) {
+            return $this->redis->set($this->name, $this->owner, [
+                    'XX',
+                    'EX' => $this->seconds
+                ]) === true;
+        }
+        return $this->isOwnedByCurrentProcess();
     }
 
     /**
@@ -55,7 +74,10 @@ class RedisLock extends AbstractLock
      */
     public function release(): bool
     {
-        return (bool)$this->redis->eval(LuaScripts::releaseLock(), [$this->name, $this->owner], 1);
+        return (bool)$this->redis->eval(LuaScripts::releaseLock(), [
+            $this->name,
+            $this->owner
+        ], 1);
     }
 
     /**
