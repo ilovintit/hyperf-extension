@@ -68,10 +68,14 @@ class VerifyApiSignature implements MiddlewareInterface
      */
     protected function getContentEncode(ServerRequestInterface $request): string
     {
-        if (in_array($request->getMethod(), ['GET', 'DELETE'])) {
+        if (in_array($request->getMethod(), [
+            'GET',
+            'DELETE'
+        ])) {
             return '';
         }
-        return (empty($request->getBody()->getContents()) ? '' : base64_encode(md5($request->getBody()->getContents(), true)));
+        return (empty($request->getBody()->getContents()) ? '' : base64_encode(md5($request->getBody()
+            ->getContents(), true)));
     }
 
     /**
@@ -91,7 +95,11 @@ class VerifyApiSignature implements MiddlewareInterface
             }
         }
         if (strlen($request->getHeaderLine('X-Ca-Nonce')) !== 36) {
-            throw new CustomException(trans('middleware.signature.header_length_invalid', ['key' => 'X-Ca-Nonce', 'length' => 40, 'unit' => 'byte']));
+            throw new CustomException(trans('middleware.signature.header_length_invalid', [
+                'key' => 'X-Ca-Nonce',
+                'length' => 40,
+                'unit' => 'byte'
+            ]));
         }
         /*
          * 检验请求的时间与实际时间的偏差值，超过偏差值的请求会被拒绝，防止回放攻击
@@ -107,7 +115,8 @@ class VerifyApiSignature implements MiddlewareInterface
         /*
          * 根据请求的路径和请求的随机数进行校验，保证在15分钟内只能请求一次，结合上述时间校验防止回放攻击
          */
-        $uniqueRequestStr = 'signature:' . sha1($request->getUri()->getPath() . "\n" . $request->getHeaderLine('X-Ca-Nonce'));
+        $uniqueRequestStr = 'signature:' . sha1($request->getUri()
+                    ->getPath() . "\n" . $request->getHeaderLine('X-Ca-Nonce'));
         if ($this->cache->get($uniqueRequestStr)) {
             throw new CustomException(trans('middleware.signature.repeat_request'));
         }
@@ -138,7 +147,7 @@ class VerifyApiSignature implements MiddlewareInterface
             . $request->getHeaderLine('X-Ca-Timestamp') . "\n"
             . $signHeaderString . "\n"
             . $request->getUri()->getPath() . (empty($request->getQueryParams()) ? '' : '?' . $signQueryString);
-        if (!$signSecret = config('library.middleware.api_signature_key')) {
+        if (!$signSecret = $this->signSecret()) {
             throw new CustomException('Api Signature Key Is Empty.');
         }
         /*
@@ -149,5 +158,13 @@ class VerifyApiSignature implements MiddlewareInterface
             throw new CustomException(trans('middleware.signature.signature_invalid'), 41201, 412, ['signStr' => $signString]);
         }
         return $handler->handle($request);
+    }
+
+    /**
+     * @return string
+     */
+    protected function signSecret(): string
+    {
+        return config('library.middleware.api_signature_key');
     }
 }

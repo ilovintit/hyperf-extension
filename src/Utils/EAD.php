@@ -37,7 +37,7 @@ class EAD
     {
         $configName = $configName === null ? 'basic' : $configName;
         $configList = config('library.ead.secrets');
-        $config = isset($configList[$configName]) ? $configList[$configName] : [];
+        $config = $configList[$configName] ?? [];
         isset($config['option']) && !empty($config['option']) && $this->setOption($config['option']);
         isset($config['cipher']) && !empty($config['cipher']) && $this->setCipher($config['cipher']);
         isset($config['key']) && !empty($config['key']) && $this->setKey($config['key']);

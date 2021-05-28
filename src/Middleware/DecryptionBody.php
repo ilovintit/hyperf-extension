@@ -46,15 +46,31 @@ class DecryptionBody implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (!config('library.middleware.transmission_encryption')) {
+        if (!$this->encryptionSwitch()) {
             return $handler->handle($request);
         }
         $requestBody = $request->getParsedBody();
         if (empty($requestBody)) {
             return $handler->handle($request);
         }
-        $decodeBody = Json::decode($this->container->get(EAD::class)->decode($requestBody['encryptionData']));
+        $decodeBody = Json::decode($this->ead()->decode($requestBody['encryptionData']));
         Log::debug('decryption-body-info', ['decodeBody' => $decodeBody]);
         return $handler->handle(Context::set(ServerRequestInterface::class, $request->withParsedBody($decodeBody)));
+    }
+
+    /**
+     * @return bool
+     */
+    protected function encryptionSwitch(): bool
+    {
+        return config('library.middleware.transmission_encryption');
+    }
+
+    /**
+     * @return \Iit\HyLib\Utils\EAD
+     */
+    protected function ead(): EAD
+    {
+        return $this->container->get(EAD::class);
     }
 }

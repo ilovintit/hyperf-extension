@@ -40,10 +40,10 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
 
     /**
      * @param ServerRequestInterface $request
-     * @return array|Arrayable|mixed|ResponseInterface|string
+     * @return ResponseInterface
      */
 
-    protected function handleNotFound(ServerRequestInterface $request)
+    protected function handleNotFound(ServerRequestInterface $request): ResponseInterface
     {
         return Res::error(trans('framework.response.not-found'), 1, [], 404);
     }
@@ -51,10 +51,10 @@ class CoreMiddleware extends \Hyperf\HttpServer\CoreMiddleware
     /**
      * @param array $methods
      * @param ServerRequestInterface $request
-     * @return array|Arrayable|mixed|ResponseInterface|string
+     * @return ResponseInterface
      */
 
-    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request)
+    protected function handleMethodNotAllowed(array $methods, ServerRequestInterface $request): ResponseInterface
     {
         return Res::error(trans('framework.response.method-not-allow'), 1, ['allow' => $methods], 405);
     }
