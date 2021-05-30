@@ -34,18 +34,28 @@ class WeChat
      */
     public function __construct(CacheInterface $cache, LoggerFactory $logger, $type = self::TYPE_OFFICIAL_ACCOUNT, $name = 'default')
     {
-        $configList = config('library.services.wechat');
-        $configs = isset($configList[Str::snakeCase($type)]) ? $configList[Str::snakeCase($type)] : [];
-        $config = isset($configs[$name]) ? $configs[$name] : [];
-        $this->app = Factory::$type($config);
+        $this->app = Factory::$type($this->getConfig($type, $name));
         $this->app['cache'] = $cache;
         $this->app['logger'] = $logger->get('we-chat');
         $handler = new CoroutineHandler();
-        $config = $this->app['config']->get('http', []);
-        $config['handler'] = $stack = HandlerStack::create($handler);
-        $this->app->rebind('http_client', new Client($config));
+        $httpConfig = $this->app['config']->get('http', []);
+        $httpConfig['handler'] = $stack = HandlerStack::create($handler);
+        $this->app->rebind('http_client', new Client($httpConfig));
         $this->app['guzzle_handler'] = $handler;
         $this->app instanceof OfficialAccountApplication &&
-        $this->app->oauth->setGuzzleOptions(['http_errors' => false, 'handler' => $stack]);
+        $this->app->oauth->setGuzzleOptions([
+            'http_errors' => false,
+            'handler' => $stack
+        ]);
+    }
+
+    /**
+     * @param string $type
+     * @param string $name
+     * @return array
+     */
+    protected function getConfig(string $type, string $name): array
+    {
+        return config('library.services.wechat.' . Str::snakeCase($type) . '.' . $name, []);
     }
 }
