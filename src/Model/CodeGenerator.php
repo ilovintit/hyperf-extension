@@ -7,6 +7,9 @@ use Closure;
 use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
+use Iit\HyLib\Exceptions\CustomException;
+use Iit\HyLib\RedisLock\LockTimeoutException;
+use Iit\HyLib\RedisLock\RedisLock;
 use Redis;
 
 /**
@@ -285,12 +288,24 @@ class CodeGenerator
     public static function getUniqueCode($uniqueKey, $maxCode, $len, $type = self::TYPE_NUMBER_AND_LETTER, $prefix = '', $firstMin = null, $firstMax = null): ?string
     {
         $cacheKey = self::cacheTags($uniqueKey);
-        if (self::redis()->exists($cacheKey)) {
-            $nowMaxCode = intval(self::redis()->get($cacheKey));
-            self::redis()->incr($cacheKey);
-        } else {
-            $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
-            self::redis()->set($cacheKey, strval($nowMaxCode));
+        $redisLock = RedisLock::create($uniqueKey, 3);
+        $tips = 3;
+        $nowMaxCode = null;
+        do {
+            if (self::redis()->exists($cacheKey)) {
+                $nowMaxCode = intval(self::redis()->get($cacheKey));
+                self::redis()->incr($cacheKey);
+            } elseif ($redisLock->get()) {
+                $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
+                self::redis()->set($cacheKey, strval($nowMaxCode));
+                $redisLock->release();
+            } else {
+                $tips--;
+                usleep(250 * 1000);
+            }
+        } while ($tips > 0);
+        if ($nowMaxCode === null) {
+            throw new CustomException('获取最大编码失败,请重试.');
         }
         return self::getNext(self::convertIntegerToCode($nowMaxCode, $type, $len), $len, $type, $prefix, $firstMin, $firstMax);
     }
