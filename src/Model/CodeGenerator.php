@@ -295,10 +295,12 @@ class CodeGenerator
             if (self::redis()->exists($cacheKey)) {
                 $nowMaxCode = intval(self::redis()->get($cacheKey));
                 self::redis()->incr($cacheKey);
+                break;
             } elseif ($redisLock->get()) {
                 $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
                 self::redis()->set($cacheKey, strval($nowMaxCode));
                 $redisLock->release();
+                break;
             } else {
                 $tips--;
                 usleep(250 * 1000);
