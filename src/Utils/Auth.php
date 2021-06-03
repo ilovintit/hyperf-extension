@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Iit\HyLib\Utils;
 
 use Hyperf\Utils\ApplicationContext;
+use Hyperf\Utils\Context;
+use Iit\HyLib\Auth\AccessToken;
 use Iit\HyLib\Auth\Contract\Authenticatable;
 use Iit\HyLib\Auth\Contract\Guard;
 use Iit\HyLib\Auth\Contract\HttpAuthContract;
@@ -44,5 +46,22 @@ class Auth
     public static function check($guard = null): bool
     {
         return self::guard($guard)->check();
+    }
+
+    /**
+     * @return string
+     */
+    public static function getAccessToken(): string
+    {
+        return Context::get(AccessToken::ACCESS_TOKEN_KEY);
+    }
+
+    /**
+     * @param string $accessToken
+     * @return string
+     */
+    public static function setAccessToken(string $accessToken): string
+    {
+        return Context::set(AccessToken::ACCESS_TOKEN_KEY, $accessToken);
     }
 }

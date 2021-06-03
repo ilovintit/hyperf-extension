@@ -13,6 +13,8 @@ use Throwable;
 
 class AccessToken
 {
+    const ACCESS_TOKEN_KEY = 'xAccessToken';
+
     /**
      * @var string
      */
@@ -58,8 +60,8 @@ class AccessToken
         $this->cache = ApplicationContext::getContainer()->get(CacheInterface::class);
         $this->headerKey = $config['token_header_key'];
         $this->cachePrefix = $config['cache_prefix'];
-        $this->expired = isset($config['token_expired']) ? $config['token_expired'] : 120;
-        $this->autoRefresh = isset($config['auto_refresh']) ? $config['auto_refresh'] : true;
+        $this->expired = $config['token_expired'] ?? 120;
+        $this->autoRefresh = $config['auto_refresh'] ?? true;
     }
 
     /**
@@ -67,7 +69,7 @@ class AccessToken
      */
     public function getToken()
     {
-        return Context::getOrSet('xAccessToken', function () {
+        return Context::getOrSet(self::ACCESS_TOKEN_KEY, function () {
             return Req::now()->getHeaderLine($this->headerKey);
         });
     }
@@ -111,7 +113,7 @@ class AccessToken
      */
     protected function generateToken(): AccessToken
     {
-        Context::set('xAccessToken', Str::random(40));
+        Context::set(self::ACCESS_TOKEN_KEY, Str::random(40));
         return $this;
     }
 
