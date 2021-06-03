@@ -32,6 +32,7 @@
         "hyperf/translation": "^2.1",
         "hyperf/signal": "^2.1",
         "hyperf/paginator": "^2.1",
+        "hyperf/snowflake": "^2.1",
         "alibabacloud/sdk": "^1.8",
         "doctrine/dbal": "^3.0",
         "intervention/image": "^2.5",
