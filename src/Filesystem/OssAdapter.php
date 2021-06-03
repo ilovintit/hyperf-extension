@@ -490,7 +490,7 @@ class OssAdapter extends AbstractAdapter
             if (empty($object)) {
                 return null;
             }
-            $isCname = empty($this->config['cname']) ? false : true;
+            $isCname = !empty($this->config['cname']);
             $token = !empty($this->config['token']) ? $this->config['token'] : null;
             $endpoint = $isCname ? $this->config['cname'] : $this->endpoint;
             $this->oss = new OssClient(
@@ -500,9 +500,7 @@ class OssAdapter extends AbstractAdapter
                 $this->oss->setUseSSL(true);
                 return str_replace('http://', 'https://', $this->oss->signUrl($this->bucket, $prefix . $object));
             }
-            $isCname = empty($this->config['cname']) ? false : true;
-            $endpoint = $this->config['cname'];
-            $ret_endpoint = null;
+            $endpoint = $this->config['cname'] ?? $this->bucket . '.' . ($this->config['accelerate'] ?? $this->endpoint);
             if (strpos($endpoint, 'http://') === 0) {
                 $ret_endpoint = substr($endpoint, strlen('http://'));
             } elseif (strpos($endpoint, 'https://') === 0) {
@@ -535,7 +533,7 @@ class OssAdapter extends AbstractAdapter
             "conditions" => [['key' => $prefix . $filename]]
         ]));
         return [
-            'postUrl' => 'https://' . (isset($this->config['cname']) ? $this->config['cname'] : $this->bucket . '.' . $this->endpoint),
+            'postUrl' => 'https://' . ($this->config['cname'] ?? $this->bucket . '.' . ($this->config['accelerate'] ?? $this->endpoint)),
             'filename' => $filename,
             'key' => $prefix . $filename,
             'OSSAccessKeyId' => $this->config['access_id'],
