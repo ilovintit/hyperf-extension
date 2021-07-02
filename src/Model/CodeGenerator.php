@@ -298,7 +298,7 @@ class CodeGenerator
                 break;
             } elseif ($redisLock->get()) {
                 $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);
-                self::redis()->set($cacheKey, strval($nowMaxCode));
+                self::redis()->set($cacheKey, strval($nowMaxCode + 1));
                 $redisLock->release();
                 break;
             } else {
