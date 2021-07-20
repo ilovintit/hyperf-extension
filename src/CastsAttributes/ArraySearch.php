@@ -23,7 +23,7 @@ class ArraySearch implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes): array
     {
-        return empty($value) ? [] : explode('|', substr($value, 1, strlen($value) - 2));
+        return !empty($value) && is_string($value) ? explode('|', substr($value, 1, strlen($value) - 2)) : [];
     }
 
     /**
@@ -33,10 +33,10 @@ class ArraySearch implements CastsAttributes
      * @param string $key
      * @param mixed $value
      * @param array $attributes
-     * @return string
+     * @return null|string
      */
-    public function set($model, string $key, $value, array $attributes): string
+    public function set($model, string $key, $value, array $attributes): ?string
     {
-        return empty($value) ? '' : '|' . implode('|', $value) . '|';
+        return is_array($value) ? (empty($value) ? '' : '|' . implode('|', $value) . '|') : null;
     }
 }
