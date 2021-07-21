@@ -8,7 +8,6 @@ use Hyperf\Redis\RedisFactory;
 use Hyperf\Redis\RedisProxy;
 use Hyperf\Utils\ApplicationContext;
 use Iit\HyLib\Exceptions\CustomException;
-use Iit\HyLib\RedisLock\LockTimeoutException;
 use Iit\HyLib\RedisLock\RedisLock;
 use Redis;
 
@@ -293,8 +292,8 @@ class CodeGenerator
         $nowMaxCode = null;
         do {
             if (self::redis()->exists($cacheKey)) {
-                $nowMaxCode = intval(self::redis()->get($cacheKey));
-                self::redis()->incr($cacheKey);
+                $nowMaxCode = self::redis()->incr($cacheKey);
+                $nowMaxCode--;
                 break;
             } elseif ($redisLock->get()) {
                 $nowMaxCode = self::convertCodeToInteger(value($maxCode), $type);

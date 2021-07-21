@@ -14,6 +14,8 @@ use Iit\HyLib\Logger\FrameworkLoggerFactory;
 use Iit\HyLib\Middleware\CoreMiddleware;
 use Hyperf\HttpServer\CoreMiddleware as HyCoreMiddleware;
 use Iit\HyLib\Parser\RequestJsonParser;
+use Hyperf\Database\Commands\Ast\ModelUpdateVisitor as HyModelUpdateVisitor;
+use Iit\HyLib\Model\ModelUpdateVisitor;
 
 /**
  * Class ConfigProvider
@@ -29,6 +31,7 @@ class ConfigProvider
                 HyCoreMiddleware::class => CoreMiddleware::class,
                 StdoutLoggerInterface::class => FrameworkLoggerFactory::class,
                 HttpAuthContract::class => HttpAuthManage::class,
+                HyModelUpdateVisitor::class => ModelUpdateVisitor::class
             ],
             'exceptions' => [
                 'handler' => [
