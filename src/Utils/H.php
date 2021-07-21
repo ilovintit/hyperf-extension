@@ -72,4 +72,14 @@ class H
         $serverParams = self::request()->getServerParams();
         return $serverParams['remote_addr'] ?? null;
     }
+
+    /**
+     * 组合路径
+     * @param $path
+     * @return string
+     */
+    public static function basePath($path): string
+    {
+        return BASE_PATH . ($path ? DIRECTORY_SEPARATOR . $path : $path);
+    }
 }

@@ -67,8 +67,7 @@ trait ModelCodeGenerate
     {
         return CodeGenerator::getUniqueCode($this->generateCodeUniqueKey(), function () {
             return $this->maxCode();
-        },
-            $this->generateCodeLength(), $this->generateCodeType(), $this->generateCodePrefix(),
+        }, $this->generateCodeLength(), $this->generateCodeType(), $this->generateCodePrefix(),
             $this->generateCodeFirstMin(), $this->generateCodeFirstMax());
     }
 
