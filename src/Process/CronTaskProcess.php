@@ -67,14 +67,14 @@ abstract class CronTaskProcess extends AbstractProcess
         if ($lockTime <= 0) {
             $this->logDebug('process-interval-invalid,exit');
             sleep(3600);
-            exit;
+            return;
         }
         $this->logDebug('process-task-key:' . $this->taskKey());
         $this->lock = RedisLock::create($this->taskKey(), $lockTime);
         do {
             if ($this->checkHandleTips()) {
                 $this->logDebug('process-handle-tips-reach-max');
-                exit;
+                break;
             }
             $this->logDebug('process-try-lock-key');
             if (!$this->lock->get()) {
@@ -95,7 +95,7 @@ abstract class CronTaskProcess extends AbstractProcess
             }
             if ($this->checkMemoryLimit()) {
                 $this->logDebug('process-usage-memory-overstep-limit');
-                exit;
+                break;
             }
             $this->addHandleTips();
         } while (true);
