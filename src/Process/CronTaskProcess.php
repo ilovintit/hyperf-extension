@@ -25,6 +25,11 @@ use Throwable;
  */
 abstract class CronTaskProcess extends AbstractProcess
 {
+    use ProcessControlHelper;
+
+    /**
+     * 睡眠信号
+     */
     const SIGNAL_DELAY = 'delay';
     /**
      * @var RedisLock
@@ -35,21 +40,6 @@ abstract class CronTaskProcess extends AbstractProcess
      * @var LoggerInterface
      */
     public LoggerInterface $logger;
-
-    /**
-     * @var int 循环指定次数后退出进程重启,释放内存
-     */
-    public int $maxHandleTips = 1000;
-
-    /**
-     * @var int 每次循环检测当前进程占用内存情况,超出则退出进程重启,释放内存,单位MB
-     */
-    public int $limitMemory = 1024;
-
-    /**
-     * @var int 已经循环的次数
-     */
-    protected int $hasHandleTips = 0;
 
     /**
      * @var bool 处理任务出现异常是否进入睡眠,如果是false则立即进入下一个循环
@@ -77,14 +67,14 @@ abstract class CronTaskProcess extends AbstractProcess
         if ($lockTime <= 0) {
             $this->logDebug('process-interval-invalid,exit');
             sleep(3600);
-            exit;
+            return;
         }
         $this->logDebug('process-task-key:' . $this->taskKey());
         $this->lock = RedisLock::create($this->taskKey(), $lockTime);
         do {
-            if ($this->hasHandleTips >= $this->maxHandleTips) {
+            if ($this->checkHandleTips()) {
                 $this->logDebug('process-handle-tips-reach-max');
-                exit;
+                break;
             }
             $this->logDebug('process-try-lock-key');
             if (!$this->lock->get()) {
@@ -103,12 +93,11 @@ abstract class CronTaskProcess extends AbstractProcess
                 && sleep($this->sleepTime());
                 $this->lock->release();
             }
-            $usageMemory = memory_get_usage();
-            if ($usageMemory >= $this->limitMemory * 1024 * 1024) {
-                $this->logDebug('process-usage-memory-overstep-limit', ['usage' => $usageMemory]);
-                exit;
+            if ($this->checkMemoryLimit()) {
+                $this->logDebug('process-usage-memory-overstep-limit');
+                break;
             }
-            $this->hasHandleTips++;
+            $this->addHandleTips();
         } while (true);
     }
 
