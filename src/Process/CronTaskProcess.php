@@ -37,6 +37,26 @@ abstract class CronTaskProcess extends AbstractProcess
     public LoggerInterface $logger;
 
     /**
+     * @var int 循环指定次数后退出进程重启,释放内存
+     */
+    public int $maxHandleTips = 1000;
+
+    /**
+     * @var int 每次循环检测当前进程占用内存情况,超出则退出进程重启,释放内存,单位MB
+     */
+    public int $limitMemory = 1024;
+
+    /**
+     * @var int 已经循环的次数
+     */
+    protected int $hasHandleTips = 0;
+
+    /**
+     * @var bool 处理任务出现异常是否进入睡眠,如果是false则立即进入下一个循环
+     */
+    public bool $exceptionSleep = true;
+
+    /**
      * CronTaskProcess constructor.
      * @param ContainerInterface $container
      */
@@ -62,6 +82,10 @@ abstract class CronTaskProcess extends AbstractProcess
         $this->logDebug('process-task-key:' . $this->taskKey());
         $this->lock = RedisLock::create($this->taskKey(), $lockTime);
         do {
+            if ($this->hasHandleTips >= $this->maxHandleTips) {
+                $this->logDebug('process-handle-tips-reach-max');
+                exit;
+            }
             $this->logDebug('process-try-lock-key');
             if (!$this->lock->get()) {
                 $this->logDebug('process-lock-failed,sleep');
@@ -75,9 +99,16 @@ abstract class CronTaskProcess extends AbstractProcess
                 $this->lock->release();
             } catch (Throwable $exception) {
                 $this->logError('process-task-exception', ['exception' => $exception->__toString()]);
-                sleep($this->sleepTime());
+                $this->exceptionSleep
+                && sleep($this->sleepTime());
                 $this->lock->release();
             }
+            $usageMemory = memory_get_usage();
+            if ($usageMemory >= $this->limitMemory * 1024 * 1024) {
+                $this->logDebug('process-usage-memory-overstep-limit', ['usage' => $usageMemory]);
+                exit;
+            }
+            $this->hasHandleTips++;
         } while (true);
     }
 

@@ -42,10 +42,10 @@ class CustomJsonFormatter implements FormatterInterface
         $seq = Context::getOrSet(self::SEQUENCE_CONTEXT_KEY, 0);
         $baseFormat = [
             'id' => Log::id(),
-            'lts' => strtolower($record['level_name']) . '/' . $record['datetime']->format('Y-m-d H:i:s.u') . '/' . $seq,
+            'lts' => strtolower($record['level_name']) . '/' . $record['datetime']->format('Y-m-d H:i:s.u') . '/' . memory_get_usage() . '/' . $seq,
             'msg' => $record['message'],
         ];
-        $exception = isset($record['context']['exception']) ? $record['context']['exception'] : null;
+        $exception = $record['context']['exception'] ?? null;
         if ($exception instanceof CustomException) {
             $baseFormat['nce'] = ['data' => $exception->getData(), 'debug' => $exception->getDebug()];
         }
