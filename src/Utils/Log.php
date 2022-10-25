@@ -30,6 +30,9 @@ class Log
     {
         return Context::getOrSet('logId', function () {
             $request = Context::get(ServerRequestInterface::class);
+            if (empty($request)) {
+                return H::uuid();
+            }
             if (!method_exists($request, 'getHeaderLine')) {
                 return H::uuid();
             }
